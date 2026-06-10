@@ -202,6 +202,10 @@
   <div id="screen-result" class="screen">
     <div class="result-head">
       <div class="badge">診断結果</div>
+      <p id="sharedNote" style="display:none;font-size:.82rem;color:var(--tx2);margin-top:10px;line-height:1.7;">
+        📤 シェアされた診断結果です —
+        <button class="btn-back-q" style="display:inline;padding:0;font-size:.82rem;" onclick="startQuiz()">自分も診断してみる →</button>
+      </p>
     </div>
     <div class="winner-card">
       <div class="winner-label">あなたへのおすすめ No.1</div>
@@ -442,15 +446,66 @@ function showResult() {
 
   // シェア
   const text = `AIサブスク診断やってみた🤖 私に合うのは「${winner.name}」${winner.price === 0 ? '(0円!)' : `(月${yen(winner.price).replace('約','約 ')})`}だった!`;
+  const shareUrl = 'https://ai-subs-shindan.vercel.app/?r=' + winner.key;
   document.getElementById('btnShare').href =
-    'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent('https://ai-subs-shindan.vercel.app/');
+    'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(shareUrl);
 
+  document.getElementById('sharedNote').style.display = 'none';
+  history.replaceState(null, '', '?r=' + winner.key);
   show('screen-result');
 }
 
 function SERVICES_FREE_FALLBACK() { return { key:'free', score: 0, ...SERVICES.free }; }
 
-function restart() { show('screen-start'); }
+function restart() { history.replaceState(null, '', location.pathname); show('screen-start'); }
+
+function showResultDirect(key) {
+  const svc = SERVICES[key];
+  document.getElementById('winnerName').textContent = svc.name;
+  document.getElementById('winnerPrice').innerHTML =
+    `月額 <b>${svc.price === 0 ? '0円' : '約' + svc.price.toLocaleString() + '円'}</b>`;
+  document.getElementById('winnerDesc').textContent = svc.desc;
+
+  const ul = document.getElementById('reasonsList');
+  ul.innerHTML = '';
+  const li = document.createElement('li');
+  li.textContent = svc.strength;
+  ul.appendChild(li);
+
+  const altKeys = Object.keys(SERVICES).filter(k => k !== key).slice(0, 2);
+  const altBox = document.getElementById('altsList');
+  altBox.innerHTML = '';
+  altKeys.forEach((k, i) => {
+    const a = SERVICES[k];
+    const d = document.createElement('div');
+    d.className = 'alt-card';
+    d.innerHTML = `<span class="alt-rank">No.${i+2}</span><div class="alt-body"><div class="alt-name">${a.name}</div><div class="alt-why">${a.strength}</div></div><span class="alt-price">${yen(a.price)}</span>`;
+    altBox.appendChild(d);
+  });
+
+  document.getElementById('comboTip').style.display = 'none';
+
+  const tb = document.getElementById('compareBody');
+  tb.innerHTML = '';
+  Object.entries(SERVICES).forEach(([k, s]) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><b>${s.name}</b>${k === key ? ' ⭐️' : ''}</td><td class="price-cell">${yen(s.price)}</td><td>${s.strength}</td>`;
+    tb.appendChild(tr);
+  });
+
+  const text = `AIサブスク診断やってみた🤖 私に合うのは「${svc.name}」${svc.price === 0 ? '(0円!)' : `(月${yen(svc.price).replace('約','約 ')})`}だった!`;
+  const shareUrl = 'https://ai-subs-shindan.vercel.app/?r=' + key;
+  document.getElementById('btnShare').href =
+    'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(shareUrl);
+
+  document.getElementById('sharedNote').style.display = 'block';
+  show('screen-result');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const r = new URLSearchParams(location.search).get('r');
+  if (r && SERVICES[r]) showResultDirect(r);
+});
 </script>
 </body>
 </html>
