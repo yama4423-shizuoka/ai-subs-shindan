@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIサブスク診断 | あなたに合うAI課金プランを1分で診断</title>
+  <meta name="description" content="ChatGPT Plus・Claude Pro・Gemini・Copilot・Perplexity…どのAIサブスクに入るべき?8つの質問に答えるだけで、あなたの使い方に合った最適なAI課金プランを無料で診断します。">
+  <meta property="og:title" content="🤖 AIサブスク診断 | あなたに合うAI課金はどれ?">
+  <meta property="og:description" content="8つの質問に答えるだけで、ChatGPT・Claude・Gemini・Copilot・Perplexityからあなたに最適なAIサブスクを無料診断。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ai-subs-shindan.vercel.app/">
+  <meta property="og:image" content="https://ai-subs-shindan.vercel.app/ai-subs-ogp.svg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="AIサブスク診断">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="🤖 AIサブスク診断 | あなたに合うAI課金はどれ?">
+  <meta name="twitter:description" content="8つの質問に答えるだけで、あなたに最適なAIサブスクを無料診断。">
+  <meta name="twitter:image" content="https://ai-subs-shindan.vercel.app/ai-subs-ogp.svg">
+  <script defer src="/_vercel/insights/script.js"></script>
+  <style>
+    :root {
+      --bg:#07070f; --s1:#0e0e1a; --s2:#13131f; --s3:#1a1a2a;
+      --bd:#22223a; --tx:#f0f0fa; --tx2:#6868a0; --tx3:#9090c0;
+      --acc:#7c6ff5; --acc2:#a89cf7; --accG:rgba(124,111,245,.18);
+      --green:#34d399; --yellow:#fbbf24; --red:#f87171; --blue:#60a5fa;
+      --r:16px; --r2:10px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background:var(--bg); color:var(--tx);
+      font-family:'Segoe UI','Hiragino Sans','Yu Gothic UI',system-ui,sans-serif;
+      min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    }
+    .wrapper { width:100%; max-width:720px; padding:24px 20px 60px; }
+    .screen { display:none; }
+    .screen.active { display:block; animation:fadeIn .3s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+
+    /* START */
+    .hero { text-align:center; padding:48px 0 32px; }
+    .badge {
+      display:inline-block; font-size:.72rem; font-weight:800; letter-spacing:.15em;
+      text-transform:uppercase; color:var(--acc2);
+      background:var(--accG); border:1px solid rgba(124,111,245,.35);
+      padding:4px 14px; border-radius:999px; margin-bottom:16px;
+    }
+    h1 { font-size:clamp(1.7rem,5vw,2.6rem); font-weight:900; line-height:1.2; letter-spacing:-.02em; }
+    h1 .grad { background:linear-gradient(135deg,#a89cf7,#60a5fa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .hero p { color:var(--tx3); margin-top:14px; line-height:1.8; font-size:.95rem; }
+    .hero-meta { display:flex; gap:10px; justify-content:center; margin-top:18px; flex-wrap:wrap; }
+    .hero-meta span {
+      font-size:.78rem; color:var(--tx2); background:var(--s1);
+      border:1px solid var(--bd); border-radius:8px; padding:5px 12px;
+    }
+    .btn-main {
+      display:block; margin:28px auto 0; border:none; cursor:pointer;
+      background:linear-gradient(135deg,var(--acc),#60a5fa); color:#fff;
+      font-size:1.05rem; font-weight:800; padding:16px 48px; border-radius:14px;
+      box-shadow:0 0 30px rgba(124,111,245,.35); transition:transform .15s, box-shadow .15s;
+    }
+    .btn-main:hover { transform:translateY(-2px); box-shadow:0 0 44px rgba(124,111,245,.55); }
+    .services-row { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:36px; }
+    .svc-chip { font-size:.78rem; color:var(--tx3); background:var(--s1); border:1px solid var(--bd); border-radius:999px; padding:6px 14px; }
+
+    /* QUIZ */
+    .progress-wrap { margin:8px 0 20px; }
+    .progress-label { display:flex; justify-content:space-between; font-size:.78rem; color:var(--tx2); margin-bottom:6px; font-weight:600; }
+    .progress-bar { height:6px; background:var(--s2); border-radius:999px; overflow:hidden; }
+    .progress-fill { height:100%; background:linear-gradient(90deg,var(--acc),#60a5fa); border-radius:999px; transition:width .3s ease; }
+    .q-card { background:var(--s1); border:1px solid var(--bd); border-radius:var(--r); padding:28px 24px; }
+    .q-num { font-size:.72rem; font-weight:800; color:var(--acc2); letter-spacing:.1em; margin-bottom:8px; }
+    .q-title { font-size:1.2rem; font-weight:800; line-height:1.45; margin-bottom:20px; }
+    .opts { display:flex; flex-direction:column; gap:10px; }
+    .opt {
+      background:var(--s2); border:1px solid var(--bd); border-radius:var(--r2);
+      color:var(--tx); cursor:pointer; font-size:.92rem; font-weight:600;
+      padding:14px 16px; text-align:left; display:flex; align-items:center; gap:12px;
+      transition:border-color .15s, background .15s, transform .1s;
+    }
+    .opt:hover { border-color:var(--acc); background:rgba(124,111,245,.07); transform:translateX(3px); }
+    .opt .emoji { font-size:1.2rem; flex-shrink:0; }
+    .opt small { display:block; color:var(--tx2); font-weight:500; font-size:.78rem; margin-top:2px; }
+    .btn-back-q {
+      margin-top:16px; background:none; border:none; color:var(--tx2);
+      cursor:pointer; font-size:.85rem; font-weight:600; padding:8px;
+    }
+    .btn-back-q:hover { color:var(--tx3); }
+
+    /* RESULT */
+    .result-head { text-align:center; padding:16px 0 24px; }
+    .result-head .badge { margin-bottom:10px; }
+    .winner-card {
+      background:linear-gradient(135deg, rgba(124,111,245,.12), rgba(96,165,250,.06));
+      border:2px solid var(--acc); border-radius:var(--r); padding:28px 24px;
+      box-shadow:0 0 50px rgba(124,111,245,.15); text-align:center;
+    }
+    .winner-label { font-size:.72rem; font-weight:800; color:var(--acc2); letter-spacing:.12em; margin-bottom:10px; }
+    .winner-name { font-size:1.7rem; font-weight:900; margin-bottom:4px; }
+    .winner-price { font-size:1rem; color:var(--tx3); font-weight:700; margin-bottom:14px; }
+    .winner-price b { color:var(--green); font-size:1.25rem; }
+    .winner-desc { font-size:.92rem; color:var(--tx3); line-height:1.8; }
+    .reasons { margin-top:18px; text-align:left; background:var(--s1); border:1px solid var(--bd); border-radius:var(--r2); padding:16px 18px; }
+    .reasons h3 { font-size:.82rem; color:var(--acc2); font-weight:800; margin-bottom:10px; }
+    .reasons li { list-style:none; font-size:.86rem; color:var(--tx3); padding:4px 0; display:flex; gap:8px; line-height:1.6; }
+    .reasons li::before { content:'✓'; color:var(--green); font-weight:800; flex-shrink:0; }
+    .alts { margin-top:20px; display:flex; flex-direction:column; gap:10px; }
+    .alt-card {
+      background:var(--s1); border:1px solid var(--bd); border-radius:var(--r2);
+      padding:14px 18px; display:flex; align-items:center; gap:14px;
+    }
+    .alt-rank { font-size:.7rem; font-weight:800; color:var(--tx2); background:var(--s2); border:1px solid var(--bd); border-radius:6px; padding:4px 8px; flex-shrink:0; }
+    .alt-body { flex:1; }
+    .alt-name { font-weight:800; font-size:.95rem; }
+    .alt-why { font-size:.78rem; color:var(--tx2); margin-top:2px; line-height:1.5; }
+    .alt-price { font-size:.82rem; color:var(--tx3); font-weight:700; white-space:nowrap; }
+    .combo-tip {
+      margin-top:20px; background:rgba(52,211,153,.08); border:1px solid rgba(52,211,153,.25);
+      border-radius:var(--r2); padding:14px 18px; font-size:.86rem; color:var(--tx3); line-height:1.7;
+    }
+    .combo-tip b { color:var(--green); }
+
+    /* TABLE */
+    .compare { margin-top:32px; }
+    .compare h2 { font-size:1.05rem; font-weight:800; margin-bottom:14px; }
+    .table-scroll { overflow-x:auto; border:1px solid var(--bd); border-radius:var(--r2); }
+    table { width:100%; border-collapse:collapse; font-size:.82rem; min-width:520px; }
+    th, td { padding:10px 12px; text-align:left; border-bottom:1px solid var(--bd); }
+    th { background:var(--s2); color:var(--tx3); font-size:.74rem; text-transform:uppercase; letter-spacing:.05em; white-space:nowrap; }
+    td { color:var(--tx3); line-height:1.5; }
+    td b { color:var(--tx); }
+    tr:last-child td { border-bottom:none; }
+    .price-cell { white-space:nowrap; font-weight:700; }
+
+    .result-actions { display:flex; gap:12px; margin-top:28px; flex-wrap:wrap; justify-content:center; }
+    .btn-share {
+      border:none; cursor:pointer; background:#000; color:#fff; border:1px solid #333;
+      font-size:.9rem; font-weight:700; padding:13px 26px; border-radius:12px;
+      transition:transform .15s; text-decoration:none; display:inline-block;
+    }
+    .btn-share:hover { transform:translateY(-1px); border-color:#666; }
+    .btn-retry {
+      background:var(--s2); border:1px solid var(--bd); border-radius:12px; color:var(--tx3);
+      cursor:pointer; font-size:.9rem; font-weight:700; padding:13px 26px; transition:border-color .15s;
+    }
+    .btn-retry:hover { border-color:var(--acc); color:var(--tx); }
+
+    .disclaimer { margin-top:28px; font-size:.74rem; color:var(--tx2); line-height:1.7; text-align:center; }
+    footer { margin-top:40px; padding-top:20px; border-top:1px solid var(--bd); text-align:center; font-size:.8rem; color:var(--tx2); }
+    footer a { color:var(--acc2); text-decoration:none; }
+    footer a:hover { text-decoration:underline; }
+
+    @media (max-width:520px) {
+      .wrapper { padding:16px 14px 48px; }
+      .hero { padding:32px 0 24px; }
+      .q-card { padding:20px 16px; }
+      .winner-card { padding:22px 16px; }
+      .result-actions button, .result-actions a { width:100%; text-align:center; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- START -->
+  <div id="screen-start" class="screen active">
+    <div class="hero">
+      <div class="badge">AI Subs Checker</div>
+      <h1>AIサブスク診断<br><span class="grad">あなたに合うAI課金はどれ?</span></h1>
+      <p>ChatGPT Plus? Claude Pro? Gemini? それとも無料で十分?<br>8つの質問に答えるだけで、あなたの使い方に合った<br>最適なAIサブスクが分かります。</p>
+      <div class="hero-meta">
+        <span>⏱ 約1分</span><span>📝 8問</span><span>💸 無料・登録不要</span>
+      </div>
+      <button class="btn-main" onclick="startQuiz()">診断スタート →</button>
+      <div class="services-row">
+        <span class="svc-chip">ChatGPT Plus</span>
+        <span class="svc-chip">Claude Pro</span>
+        <span class="svc-chip">Gemini</span>
+        <span class="svc-chip">GitHub Copilot</span>
+        <span class="svc-chip">Perplexity Pro</span>
+        <span class="svc-chip">無料プラン併用</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="screen-quiz" class="screen">
+    <div class="progress-wrap">
+      <div class="progress-label"><span id="qCounter">Q1 / 8</span><span id="qPercent">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+    <div class="q-card">
+      <div class="q-num" id="qNum"></div>
+      <div class="q-title" id="qTitle"></div>
+      <div class="opts" id="opts"></div>
+    </div>
+    <button class="btn-back-q" id="btnBackQ" onclick="prevQuestion()">← ひとつ前に戻る</button>
+  </div>
+
+  <!-- RESULT -->
+  <div id="screen-result" class="screen">
+    <div class="result-head">
+      <div class="badge">診断結果</div>
+    </div>
+    <div class="winner-card">
+      <div class="winner-label">あなたへのおすすめ No.1</div>
+      <div class="winner-name" id="winnerName"></div>
+      <div class="winner-price" id="winnerPrice"></div>
+      <div class="winner-desc" id="winnerDesc"></div>
+      <div class="reasons">
+        <h3>おすすめの理由</h3>
+        <ul id="reasonsList"></ul>
+      </div>
+    </div>
+    <div class="alts" id="altsList"></div>
+    <div class="combo-tip" id="comboTip" style="display:none"></div>
+
+    <div class="compare">
+      <h2>📊 主要AIサブスク比較表</h2>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>サービス</th><th>月額目安</th><th>得意なこと</th></tr></thead>
+          <tbody id="compareBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="result-actions">
+      <a class="btn-share" id="btnShare" target="_blank" rel="noopener">𝕏 で結果をシェア</a>
+      <button class="btn-retry" onclick="restart()">もう一度診断する</button>
+    </div>
+
+    <p class="disclaimer">※ 料金は2026年6月時点の日本円目安です(為替・改定により変動します)。ご契約前に各サービスの公式サイトで最新の価格・機能をご確認ください。本診断は使い方の傾向に基づく参考情報です。</p>
+  </div>
+
+  <footer>
+    🎬 動画サブスクの最適化は姉妹サイト <a href="https://streaming-optimizer-sigma.vercel.app/">サブスク診断</a> へ
+  </footer>
+</div>
+
+<script>
+const SERVICES = {
+  chatgpt: {
+    name: 'ChatGPT Plus', price: 3000, url: 'https://chatgpt.com/',
+    desc: '画像生成・音声会話・カスタムGPTsまで全部入りの万能型。迷ったらまずこれ、の定番です。',
+    strength: '万能。画像生成・音声・幅広い用途に1本で対応',
+  },
+  claude: {
+    name: 'Claude Pro', price: 2900, url: 'https://claude.ai/',
+    desc: '文章の自然さと、長い資料の読み込み・コーディング支援に定評。じっくり考える作業のパートナーに。',
+    strength: '自然な文章作成・長文読解・コーディング',
+  },
+  gemini: {
+    name: 'Google AI Pro (Gemini)', price: 2900, url: 'https://gemini.google.com/',
+    desc: 'Gmail・ドキュメント・カレンダーと連携して動けるのが最大の強み。動画生成や検索連動も得意です。',
+    strength: 'Googleサービス連携・検索連動・動画生成',
+  },
+  copilot: {
+    name: 'GitHub Copilot Pro', price: 1500, url: 'https://github.com/features/copilot',
+    desc: 'エディタの中でコードを補完・生成してくれる開発者特化型。コードを書く人の費用対効果は抜群。',
+    strength: 'エディタ内のコード補完・開発特化',
+  },
+  perplexity: {
+    name: 'Perplexity Pro', price: 3000, url: 'https://www.perplexity.ai/',
+    desc: '出典リンク付きで答えてくれる検索・調査特化型。「ググる」をまるごと置き換えたい人に。',
+    strength: '出典付きの検索・リサーチ特化',
+  },
+  free: {
+    name: '無料プランの組み合わせ', price: 0, url: '',
+    desc: 'ChatGPT・Gemini・Claudeの無料枠を使い分ければ、ライトな使い方なら十分戦えます。まずは0円から。',
+    strength: '0円。ライトユーザーなら十分',
+  },
+};
+
+const QUESTIONS = [
+  { title: 'AIで一番やりたいことは?', opts: [
+    { e:'✍️', t:'文章作成・メール・資料づくり', s:{claude:3, chatgpt:2, gemini:1} },
+    { e:'💻', t:'プログラミング・アプリ開発', s:{copilot:3, claude:3, chatgpt:1} },
+    { e:'🔍', t:'調べ物・リサーチ', s:{perplexity:3, gemini:2, chatgpt:1} },
+    { e:'🎨', t:'画像・動画づくり', s:{chatgpt:3, gemini:3} },
+    { e:'💬', t:'相談・アイデア出し・雑談', s:{chatgpt:2, claude:2, gemini:1} },
+  ]},
+  { title: 'どれくらいの頻度で使いそう?', opts: [
+    { e:'🔥', t:'毎日がっつり(1時間以上)', s:{chatgpt:2, claude:2, gemini:2, free:-3} },
+    { e:'☀️', t:'毎日ちょこちょこ', s:{chatgpt:1, claude:1, gemini:1, free:-1} },
+    { e:'📅', t:'週に数回', s:{free:2} },
+    { e:'🌙', t:'たまに思い出したとき', s:{free:4} },
+  ]},
+  { title: '仕事や学業で使う?', opts: [
+    { e:'💼', t:'仕事の中心ツールにしたい', s:{chatgpt:2, claude:2, free:-2} },
+    { e:'📚', t:'仕事・学業の補助として', s:{chatgpt:1, claude:1, gemini:1} },
+    { e:'🏠', t:'プライベート中心', s:{free:1} },
+  ]},
+  { title: 'コードは書く?', opts: [
+    { e:'⌨️', t:'仕事で書いている', s:{copilot:4, claude:2} },
+    { e:'🛠', t:'趣味でたまに書く(バイブコーディング含む)', s:{copilot:2, claude:2, chatgpt:1} },
+    { e:'🙅', t:'書かない', s:{copilot:-99} },
+  ]},
+  { title: '画像や動画の生成は使いたい?', opts: [
+    { e:'🎬', t:'バンバン使いたい', s:{chatgpt:3, gemini:3, claude:-2} },
+    { e:'🖼', t:'たまに使うかも', s:{chatgpt:1, gemini:1} },
+    { e:'🚫', t:'ほぼ使わない', s:{} },
+  ]},
+  { title: '最新ニュースやWeb検索をもとにした回答は必要?', opts: [
+    { e:'📰', t:'かなり重要', s:{perplexity:3, gemini:2, chatgpt:1} },
+    { e:'🤷', t:'あれば嬉しい', s:{perplexity:1, gemini:1} },
+    { e:'📦', t:'こだわらない', s:{} },
+  ]},
+  { title: 'Gmail・GoogleドキュメントなどGoogleサービスとの連携は?', opts: [
+    { e:'🔗', t:'必須級に欲しい', s:{gemini:4} },
+    { e:'➕', t:'あれば便利', s:{gemini:2} },
+    { e:'🆓', t:'特にいらない', s:{} },
+  ]},
+  { title: '月にいくらまで出せる?', opts: [
+    { e:'0️⃣', t:'0円がいい', budget:0 },
+    { e:'☕️', t:'〜3,000円(サブスク1本分)', budget:3000 },
+    { e:'💪', t:'〜10,000円(複数契約もアリ)', budget:10000 },
+    { e:'🚀', t:'上限なし(投資と考える)', budget:Infinity },
+  ]},
+];
+
+let current = 0;
+let scores = {};
+let budget = 3000;
+let answers = [];
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0 });
+}
+
+function startQuiz() {
+  current = 0; scores = {}; budget = 3000; answers = [];
+  Object.keys(SERVICES).forEach(k => scores[k] = 0);
+  renderQuestion();
+  show('screen-quiz');
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[current];
+  document.getElementById('qCounter').textContent = `Q${current+1} / ${QUESTIONS.length}`;
+  document.getElementById('qPercent').textContent = Math.round(current / QUESTIONS.length * 100) + '%';
+  document.getElementById('progressFill').style.width = (current / QUESTIONS.length * 100) + '%';
+  document.getElementById('qNum').textContent = `QUESTION ${current+1}`;
+  document.getElementById('qTitle').textContent = q.title;
+  const box = document.getElementById('opts');
+  box.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.innerHTML = `<span class="emoji">${o.e}</span><span>${o.t}</span>`;
+    b.onclick = () => answer(i);
+    box.appendChild(b);
+  });
+  document.getElementById('btnBackQ').style.visibility = current === 0 ? 'hidden' : 'visible';
+}
+
+function answer(i) {
+  answers[current] = i;
+  const o = QUESTIONS[current].opts[i];
+  if (o.s) Object.entries(o.s).forEach(([k, v]) => scores[k] += v);
+  if (o.budget !== undefined) budget = o.budget;
+  current++;
+  if (current < QUESTIONS.length) renderQuestion();
+  else showResult();
+}
+
+function prevQuestion() {
+  if (current === 0) return;
+  current--;
+  // 戻ったぶんのスコアを取り消す
+  const o = QUESTIONS[current].opts[answers[current]];
+  if (o.s) Object.entries(o.s).forEach(([k, v]) => scores[k] -= v);
+  if (o.budget !== undefined) budget = 3000;
+  renderQuestion();
+}
+
+function yen(p) { return p === 0 ? '¥0' : '約¥' + p.toLocaleString() + '/月'; }
+
+function showResult() {
+  const ranked = Object.entries(scores)
+    .map(([k, v]) => ({ key: k, score: v, ...SERVICES[k] }))
+    .sort((a, b) => b.score - a.score);
+
+  const affordable = ranked.filter(s => s.price <= budget && s.score > -10);
+  let winner = affordable[0] || SERVICES_FREE_FALLBACK();
+  const paidTop = ranked.filter(s => s.price > 0 && s.score > -10)[0];
+
+  // 予算0円なら無料が勝者。ただし「予算が許せば」を案内
+  if (budget === 0) winner = { key:'free', score: scores.free, ...SERVICES.free };
+
+  document.getElementById('winnerName').textContent = winner.name;
+  document.getElementById('winnerPrice').innerHTML = `月額 <b>${winner.price === 0 ? '0円' : '約' + winner.price.toLocaleString() + '円'}</b>`;
+  document.getElementById('winnerDesc').textContent = winner.desc;
+
+  // 理由を生成
+  const reasons = [];
+  reasons.push(winner.strength);
+  const useAns = answers[0];
+  const useTxt = ['文章作成・資料づくり中心の使い方', 'プログラミング中心の使い方', 'リサーチ中心の使い方', '画像・動画生成を重視する使い方', '相談・アイデア出し中心の使い方'][useAns];
+  if (useTxt) reasons.push(`あなたの「${useTxt}」と相性が良い`);
+  if (budget === 0) reasons.push('予算0円の条件内でベストな構成');
+  else if (winner.price <= budget) reasons.push(`月${budget === Infinity ? '予算' : '¥' + budget.toLocaleString()}の範囲に収まる`);
+  const ul = document.getElementById('reasonsList');
+  ul.innerHTML = '';
+  reasons.forEach(r => { const li = document.createElement('li'); li.textContent = r; ul.appendChild(li); });
+
+  // 次点
+  const alts = ranked.filter(s => s.key !== winner.key && s.score > -10).slice(0, 2);
+  const altBox = document.getElementById('altsList');
+  altBox.innerHTML = '';
+  alts.forEach((a, i) => {
+    const d = document.createElement('div');
+    d.className = 'alt-card';
+    d.innerHTML = `<span class="alt-rank">No.${i+2}</span><div class="alt-body"><div class="alt-name">${a.name}</div><div class="alt-why">${a.strength}</div></div><span class="alt-price">${yen(a.price)}</span>`;
+    altBox.appendChild(d);
+  });
+
+  // 組み合わせ提案
+  const combo = document.getElementById('comboTip');
+  if (budget >= 4500 && scores.copilot > 2 && winner.key !== 'copilot') {
+    combo.style.display = 'block';
+    combo.innerHTML = `💡 <b>組み合わせ技:</b> ${winner.name} に <b>GitHub Copilot Pro(約¥1,500)</b>を足すと、会話AIとエディタ内補完の両取りができます。コードを書くならコスパの高い構成です。`;
+  } else if (budget === 0 && paidTop) {
+    combo.style.display = 'block';
+    combo.innerHTML = `💡 <b>もし予算が出せるなら:</b> あなたの使い方なら <b>${paidTop.name}(${yen(paidTop.price)})</b>が最有力です。無料枠で物足りなくなったら検討してみてください。`;
+  } else {
+    combo.style.display = 'none';
+  }
+
+  // 比較表
+  const tb = document.getElementById('compareBody');
+  tb.innerHTML = '';
+  ranked.filter(s => s.score > -10 || s.key === 'copilot').forEach(s => {
+    const tr = document.createElement('tr');
+    const mark = s.key === winner.key ? ' ⭐️' : '';
+    tr.innerHTML = `<td><b>${s.name}</b>${mark}</td><td class="price-cell">${yen(s.price)}</td><td>${s.strength}</td>`;
+    tb.appendChild(tr);
+  });
+
+  // シェア
+  const text = `AIサブスク診断やってみた🤖 私に合うのは「${winner.name}」${winner.price === 0 ? '(0円!)' : `(月${yen(winner.price).replace('約','約 ')})`}だった!`;
+  document.getElementById('btnShare').href =
+    'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent('https://ai-subs-shindan.vercel.app/');
+
+  show('screen-result');
+}
+
+function SERVICES_FREE_FALLBACK() { return { key:'free', score: 0, ...SERVICES.free }; }
+
+function restart() { show('screen-start'); }
+</script>
+</body>
+</html>
