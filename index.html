@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AIサブスク診断 | あなたに合うAI課金プランを1分で診断</title>
   <meta name="description" content="ChatGPT Plus・Claude Pro・Gemini・Copilot・Perplexity…どのAIサブスクに入るべき?8つの質問に答えるだけで、あなたの使い方に合った最適なAI課金プランを無料で診断します。">
-  <meta property="og:title" content="🤖 AIサブスク診断 | あなたに合うAI課金はどれ?">
+  <meta property="og:title" content="AIサブスク診断 | あなたに合うAI課金はどれ?">
   <meta property="og:description" content="8つの質問に答えるだけで、ChatGPT・Claude・Gemini・Copilot・Perplexityからあなたに最適なAIサブスクを無料診断。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://ai-subs-shindan.vercel.app/">
@@ -15,7 +15,7 @@
   <meta property="og:site_name" content="AIサブスク診断">
   <meta property="og:locale" content="ja_JP">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="🤖 AIサブスク診断 | あなたに合うAI課金はどれ?">
+  <meta name="twitter:title" content="AIサブスク診断 | あなたに合うAI課金はどれ?">
   <meta name="twitter:description" content="8つの質問に答えるだけで、あなたに最適なAIサブスクを無料診断。">
   <meta name="twitter:image" content="https://ai-subs-shindan.vercel.app/ai-subs-ogp.svg">
   <script defer src="/_vercel/insights/script.js"></script>
@@ -170,7 +170,7 @@
       <h1>AIサブスク診断<br><span class="grad">あなたに合うAI課金はどれ?</span></h1>
       <p>ChatGPT Plus? Claude Pro? Gemini? それとも無料で十分?<br>8つの質問に答えるだけで、あなたの使い方に合った<br>最適なAIサブスクが分かります。</p>
       <div class="hero-meta">
-        <span>⏱ 約1分</span><span>📝 8問</span><span>💸 無料・登録不要</span>
+        <span> 約1分</span><span> 8問</span><span> 無料・登録不要</span>
       </div>
       <button class="btn-main" onclick="startQuiz()">診断スタート →</button>
       <div class="services-row">
@@ -203,7 +203,7 @@
     <div class="result-head">
       <div class="badge">診断結果</div>
       <p id="sharedNote" style="display:none;font-size:.82rem;color:var(--tx2);margin-top:10px;line-height:1.7;">
-        📤 シェアされた診断結果です —
+         シェアされた診断結果です —
         <button class="btn-back-q" style="display:inline;padding:0;font-size:.82rem;" onclick="startQuiz()">自分も診断してみる →</button>
       </p>
     </div>
@@ -221,7 +221,7 @@
     <div class="combo-tip" id="comboTip" style="display:none"></div>
 
     <div class="compare">
-      <h2>📊 主要AIサブスク比較表</h2>
+      <h2> 主要AIサブスク比較表</h2>
       <div class="table-scroll">
         <table>
           <thead><tr><th>サービス</th><th>月額目安</th><th>得意なこと</th></tr></thead>
@@ -239,7 +239,7 @@
   </div>
 
   <footer>
-    🎬 動画サブスクの最適化は姉妹サイト <a href="https://streaming-optimizer-sigma.vercel.app/">サブスク診断</a> へ
+     動画サブスクの最適化は姉妹サイト <a href="https://streaming-optimizer-sigma.vercel.app/">サブスク診断</a> へ
   </footer>
 </div>
 
@@ -279,48 +279,48 @@ const SERVICES = {
 
 const QUESTIONS = [
   { title: 'AIで一番やりたいことは?', opts: [
-    { e:'✍️', t:'文章作成・メール・資料づくり', s:{claude:3, chatgpt:2, gemini:1} },
-    { e:'💻', t:'プログラミング・アプリ開発', s:{copilot:3, claude:3, chatgpt:1} },
-    { e:'🔍', t:'調べ物・リサーチ', s:{perplexity:3, gemini:2, chatgpt:1} },
-    { e:'🎨', t:'画像・動画づくり', s:{chatgpt:3, gemini:3} },
-    { e:'💬', t:'相談・アイデア出し・雑談', s:{chatgpt:2, claude:2, gemini:1} },
+    { e:'', t:'文章作成・メール・資料づくり', s:{claude:3, chatgpt:2, gemini:1} },
+    { e:'', t:'プログラミング・アプリ開発', s:{copilot:3, claude:3, chatgpt:1} },
+    { e:'', t:'調べ物・リサーチ', s:{perplexity:3, gemini:2, chatgpt:1} },
+    { e:'', t:'画像・動画づくり', s:{chatgpt:3, gemini:3} },
+    { e:'', t:'相談・アイデア出し・雑談', s:{chatgpt:2, claude:2, gemini:1} },
   ]},
   { title: 'どれくらいの頻度で使いそう?', opts: [
-    { e:'🔥', t:'毎日がっつり(1時間以上)', s:{chatgpt:2, claude:2, gemini:2, free:-3} },
-    { e:'☀️', t:'毎日ちょこちょこ', s:{chatgpt:1, claude:1, gemini:1, free:-1} },
-    { e:'📅', t:'週に数回', s:{free:2} },
-    { e:'🌙', t:'たまに思い出したとき', s:{free:4} },
+    { e:'', t:'毎日がっつり(1時間以上)', s:{chatgpt:2, claude:2, gemini:2, free:-3} },
+    { e:'', t:'毎日ちょこちょこ', s:{chatgpt:1, claude:1, gemini:1, free:-1} },
+    { e:'', t:'週に数回', s:{free:2} },
+    { e:'', t:'たまに思い出したとき', s:{free:4} },
   ]},
   { title: '仕事や学業で使う?', opts: [
-    { e:'💼', t:'仕事の中心ツールにしたい', s:{chatgpt:2, claude:2, free:-2} },
-    { e:'📚', t:'仕事・学業の補助として', s:{chatgpt:1, claude:1, gemini:1} },
-    { e:'🏠', t:'プライベート中心', s:{free:1} },
+    { e:'', t:'仕事の中心ツールにしたい', s:{chatgpt:2, claude:2, free:-2} },
+    { e:'', t:'仕事・学業の補助として', s:{chatgpt:1, claude:1, gemini:1} },
+    { e:'', t:'プライベート中心', s:{free:1} },
   ]},
   { title: 'コードは書く?', opts: [
-    { e:'⌨️', t:'仕事で書いている', s:{copilot:4, claude:2} },
-    { e:'🛠', t:'趣味でたまに書く(バイブコーディング含む)', s:{copilot:2, claude:2, chatgpt:1} },
-    { e:'🙅', t:'書かない', s:{copilot:-99} },
+    { e:'', t:'仕事で書いている', s:{copilot:4, claude:2} },
+    { e:'', t:'趣味でたまに書く(バイブコーディング含む)', s:{copilot:2, claude:2, chatgpt:1} },
+    { e:'', t:'書かない', s:{copilot:-99} },
   ]},
   { title: '画像や動画の生成は使いたい?', opts: [
-    { e:'🎬', t:'バンバン使いたい', s:{chatgpt:3, gemini:3, claude:-2} },
-    { e:'🖼', t:'たまに使うかも', s:{chatgpt:1, gemini:1} },
-    { e:'🚫', t:'ほぼ使わない', s:{} },
+    { e:'', t:'バンバン使いたい', s:{chatgpt:3, gemini:3, claude:-2} },
+    { e:'', t:'たまに使うかも', s:{chatgpt:1, gemini:1} },
+    { e:'', t:'ほぼ使わない', s:{} },
   ]},
   { title: '最新ニュースやWeb検索をもとにした回答は必要?', opts: [
-    { e:'📰', t:'かなり重要', s:{perplexity:3, gemini:2, chatgpt:1} },
-    { e:'🤷', t:'あれば嬉しい', s:{perplexity:1, gemini:1} },
-    { e:'📦', t:'こだわらない', s:{} },
+    { e:'', t:'かなり重要', s:{perplexity:3, gemini:2, chatgpt:1} },
+    { e:'', t:'あれば嬉しい', s:{perplexity:1, gemini:1} },
+    { e:'', t:'こだわらない', s:{} },
   ]},
   { title: 'Gmail・GoogleドキュメントなどGoogleサービスとの連携は?', opts: [
-    { e:'🔗', t:'必須級に欲しい', s:{gemini:4} },
-    { e:'➕', t:'あれば便利', s:{gemini:2} },
-    { e:'🆓', t:'特にいらない', s:{} },
+    { e:'', t:'必須級に欲しい', s:{gemini:4} },
+    { e:'', t:'あれば便利', s:{gemini:2} },
+    { e:'', t:'特にいらない', s:{} },
   ]},
   { title: '月にいくらまで出せる?', opts: [
-    { e:'0️⃣', t:'0円がいい', budget:0 },
-    { e:'☕️', t:'〜3,000円(サブスク1本分)', budget:3000 },
-    { e:'💪', t:'〜10,000円(複数契約もアリ)', budget:10000 },
-    { e:'🚀', t:'上限なし(投資と考える)', budget:Infinity },
+    { e:'0', t:'0円がいい', budget:0 },
+    { e:'', t:'〜3,000円(サブスク1本分)', budget:3000 },
+    { e:'', t:'〜10,000円(複数契約もアリ)', budget:10000 },
+    { e:'', t:'上限なし(投資と考える)', budget:Infinity },
   ]},
 ];
 
@@ -354,7 +354,7 @@ function renderQuestion() {
   q.opts.forEach((o, i) => {
     const b = document.createElement('button');
     b.className = 'opt';
-    b.innerHTML = `<span class="emoji">${o.e}</span><span>${o.t}</span>`;
+    b.innerHTML = `<span>${o.t}</span>`;
     b.onclick = () => answer(i);
     box.appendChild(b);
   });
@@ -426,10 +426,10 @@ function showResult() {
   const combo = document.getElementById('comboTip');
   if (budget >= 4500 && scores.copilot > 2 && winner.key !== 'copilot') {
     combo.style.display = 'block';
-    combo.innerHTML = `💡 <b>組み合わせ技:</b> ${winner.name} に <b>GitHub Copilot Pro(約¥1,500)</b>を足すと、会話AIとエディタ内補完の両取りができます。コードを書くならコスパの高い構成です。`;
+    combo.innerHTML = ` <b>組み合わせ技:</b> ${winner.name} に <b>GitHub Copilot Pro(約¥1,500)</b>を足すと、会話AIとエディタ内補完の両取りができます。コードを書くならコスパの高い構成です。`;
   } else if (budget === 0 && paidTop) {
     combo.style.display = 'block';
-    combo.innerHTML = `💡 <b>もし予算が出せるなら:</b> あなたの使い方なら <b>${paidTop.name}(${yen(paidTop.price)})</b>が最有力です。無料枠で物足りなくなったら検討してみてください。`;
+    combo.innerHTML = ` <b>もし予算が出せるなら:</b> あなたの使い方なら <b>${paidTop.name}(${yen(paidTop.price)})</b>が最有力です。無料枠で物足りなくなったら検討してみてください。`;
   } else {
     combo.style.display = 'none';
   }
@@ -439,13 +439,13 @@ function showResult() {
   tb.innerHTML = '';
   ranked.filter(s => s.score > -10 || s.key === 'copilot').forEach(s => {
     const tr = document.createElement('tr');
-    const mark = s.key === winner.key ? ' ⭐️' : '';
+    const mark = s.key === winner.key ? '(おすすめ)' : '';
     tr.innerHTML = `<td><b>${s.name}</b>${mark}</td><td class="price-cell">${yen(s.price)}</td><td>${s.strength}</td>`;
     tb.appendChild(tr);
   });
 
   // シェア
-  const text = `AIサブスク診断やってみた🤖 私に合うのは「${winner.name}」${winner.price === 0 ? '(0円!)' : `(月${yen(winner.price).replace('約','約 ')})`}だった!`;
+  const text = `AIサブスク診断やってみた 私に合うのは「${winner.name}」${winner.price === 0 ? '(0円!)' : `(月${yen(winner.price).replace('約','約 ')})`}だった!`;
   const shareUrl = 'https://ai-subs-shindan.vercel.app/?r=' + winner.key;
   document.getElementById('btnShare').href =
     'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(shareUrl);
@@ -489,11 +489,11 @@ function showResultDirect(key) {
   tb.innerHTML = '';
   Object.entries(SERVICES).forEach(([k, s]) => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td><b>${s.name}</b>${k === key ? ' ⭐️' : ''}</td><td class="price-cell">${yen(s.price)}</td><td>${s.strength}</td>`;
+    tr.innerHTML = `<td><b>${s.name}</b>${k === key ? ' ' : ''}</td><td class="price-cell">${yen(s.price)}</td><td>${s.strength}</td>`;
     tb.appendChild(tr);
   });
 
-  const text = `AIサブスク診断やってみた🤖 私に合うのは「${svc.name}」${svc.price === 0 ? '(0円!)' : `(月${yen(svc.price).replace('約','約 ')})`}だった!`;
+  const text = `AIサブスク診断やってみた 私に合うのは「${svc.name}」${svc.price === 0 ? '(0円!)' : `(月${yen(svc.price).replace('約','約 ')})`}だった!`;
   const shareUrl = 'https://ai-subs-shindan.vercel.app/?r=' + key;
   document.getElementById('btnShare').href =
     'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(shareUrl);
