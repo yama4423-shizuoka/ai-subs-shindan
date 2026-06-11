@@ -1,0 +1,24 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#07070f"/><stop offset="100%" stop-color="#13131f"/>
+    </linearGradient>
+    <linearGradient id="ng" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#a89cf7"/><stop offset="100%" stop-color="#60a5fa"/>
+    </linearGradient>
+    <linearGradient id="bar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7c6ff5"/><stop offset="100%" stop-color="#60a5fa"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="80" cy="80" r="160" fill="rgba(124,111,245,0.07)"/>
+  <circle cx="1120" cy="550" r="180" fill="rgba(96,165,250,0.05)"/>
+  <rect width="1200" height="6" fill="url(#bar)"/>
+  <rect x="430" y="108" width="340" height="44" rx="22" fill="rgba(124,111,245,0.18)" stroke="rgba(124,111,245,0.4)" stroke-width="1"/>
+  <text x="600" y="137" font-size="20" font-weight="800" text-anchor="middle" fill="#a89cf7" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI',sans-serif" letter-spacing="2">AIサブスク診断 | 診断結果</text>
+  <text x="600" y="240" font-size="34" text-anchor="middle" fill="#9090c0" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI',sans-serif">あなたへのおすすめ</text>
+  <text x="600" y="360" font-size="64" font-weight="900" text-anchor="middle" fill="url(#ng)" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI',sans-serif">無料プラン組み合わせ</text>
+  <text x="600" y="448" font-size="30" text-anchor="middle" fill="#9090c0" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI',sans-serif">ChatGPT / Gemini / Claudeの無料枠を賢く活用</text>
+  <text x="600" y="522" font-size="24" text-anchor="middle" fill="#6868a0" font-family="-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI',sans-serif">あなたも1分で診断してみませんか?</text>
+  <rect y="624" width="1200" height="6" fill="url(#bar)"/>
+</svg>

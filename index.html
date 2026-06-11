@@ -446,7 +446,7 @@ function showResult() {
 
   // シェア
   const text = `AIサブスク診断やってみた 私に合うのは「${winner.name}」${winner.price === 0 ? '(0円!)' : `(月${yen(winner.price).replace('約','約 ')})`}だった!`;
-  const shareUrl = 'https://ai-subs-shindan.vercel.app/?r=' + winner.key;
+  const shareUrl = 'https://ai-subs-shindan.vercel.app/r/' + winner.key;
   document.getElementById('btnShare').href =
     'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(shareUrl);
 
@@ -494,7 +494,7 @@ function showResultDirect(key) {
   });
 
   const text = `AIサブスク診断やってみた 私に合うのは「${svc.name}」${svc.price === 0 ? '(0円!)' : `(月${yen(svc.price).replace('約','約 ')})`}だった!`;
-  const shareUrl = 'https://ai-subs-shindan.vercel.app/?r=' + key;
+  const shareUrl = 'https://ai-subs-shindan.vercel.app/r/' + key;
   document.getElementById('btnShare').href =
     'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(shareUrl);
 
