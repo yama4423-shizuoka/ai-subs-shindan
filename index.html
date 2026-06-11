@@ -125,7 +125,7 @@
     .compare { margin-top:32px; }
     .compare h2 { font-size:1.05rem; font-weight:800; margin-bottom:14px; }
     .table-scroll { overflow-x:auto; border:1px solid var(--bd); border-radius:var(--r2); }
-    table { width:100%; border-collapse:collapse; font-size:.82rem; min-width:520px; }
+    table { width:100%; border-collapse:collapse; font-size:.82rem; min-width:700px; }
     th, td { padding:10px 12px; text-align:left; border-bottom:1px solid var(--bd); }
     th { background:var(--s2); color:var(--tx3); font-size:.74rem; text-transform:uppercase; letter-spacing:.05em; white-space:nowrap; }
     td { color:var(--tx3); line-height:1.5; }
@@ -224,7 +224,7 @@
       <h2> 主要AIサブスク比較表</h2>
       <div class="table-scroll">
         <table>
-          <thead><tr><th>サービス</th><th>月額目安</th><th>得意なこと</th></tr></thead>
+          <thead><tr><th>サービス</th><th>月額目安</th><th>無料枠</th><th>上位プラン</th><th>得意なこと</th></tr></thead>
           <tbody id="compareBody"></tbody>
         </table>
       </div>
@@ -249,31 +249,43 @@ const SERVICES = {
     name: 'ChatGPT Plus', price: 3000, url: 'https://chatgpt.com/',
     desc: '画像生成・音声会話・カスタムGPTsまで全部入りの万能型。迷ったらまずこれ、の定番です。',
     strength: '万能。画像生成・音声・幅広い用途に1本で対応',
+    free: 'GPT-4o 利用可(回数制限あり)・画像生成1日5枚',
+    upper: 'ChatGPT Pro 目安¥30,000/月(o3等ほぼ無制限)',
   },
   claude: {
     name: 'Claude Pro', price: 3300, url: 'https://claude.ai/',
     desc: '文章の自然さと、長い資料の読み込み・コーディング支援に定評。じっくり考える作業のパートナーに。(2026年4月より日本向けに消費税10%が追加)',
     strength: '自然な文章作成・長文読解・コーディング',
+    free: 'Claude 3.5 利用可(1日の使用量に上限あり)',
+    upper: 'Claude Max 5x 目安¥16,500/月〜(利用上限5倍以上)',
   },
   gemini: {
     name: 'Google AI Pro (Gemini)', price: 2900, url: 'https://gemini.google.com/',
     desc: 'Gmail・ドキュメント・カレンダーと連携して動けるのが最大の強み。動画生成や検索連動も得意です。ライト版「AI Plus」(月725円・400GBストレージ)も選択肢として新設されました。',
     strength: 'Googleサービス連携・検索連動・動画生成',
+    free: 'Gemini 1.5 Flash 無制限・Google連携基本機能',
+    upper: '—(AI Proが個人向け最上位)',
   },
   copilot: {
     name: 'GitHub Copilot Pro', price: 1500, url: 'https://github.com/features/copilot',
     desc: 'エディタの中でコードを補完・生成してくれる開発者特化型。コードを書く人の費用対効果は抜群。',
     strength: 'エディタ内のコード補完・開発特化',
+    free: '月2,000補完・月50チャット',
+    upper: 'Copilot Pro+ 目安¥5,800/月(高性能モデル選択可)',
   },
   perplexity: {
     name: 'Perplexity Pro', price: 3000, url: 'https://www.perplexity.ai/',
     desc: '出典リンク付きで答えてくれる検索・調査特化型。「ググる」をまるごと置き換えたい人に。',
     strength: '出典付きの検索・リサーチ特化',
+    free: '標準検索は無制限・高度検索(Pro)は1日5回',
+    upper: 'Enterprise Plan(法人向け・価格は要問合せ)',
   },
   free: {
     name: '無料プランの組み合わせ', price: 0, url: '',
     desc: 'ChatGPT・Gemini・Claudeの無料枠を使い分ければ、ライトな使い方なら十分戦えます。まずは0円から。',
     strength: '0円。ライトユーザーなら十分',
+    free: 'ChatGPT・Claude・Gemini各社の無料枠を組み合わせ',
+    upper: '各社の有料プランへいつでも移行可',
   },
 };
 
@@ -440,7 +452,7 @@ function showResult() {
   ranked.filter(s => s.score > -10 || s.key === 'copilot').forEach(s => {
     const tr = document.createElement('tr');
     const mark = s.key === winner.key ? '(おすすめ)' : '';
-    tr.innerHTML = `<td><b>${s.name}</b>${mark}</td><td class="price-cell">${yen(s.price)}</td><td>${s.strength}</td>`;
+    tr.innerHTML = `<td><b>${s.name}</b>${mark}</td><td class="price-cell">${yen(s.price)}</td><td>${s.free || '—'}</td><td>${s.upper || '—'}</td><td>${s.strength}</td>`;
     tb.appendChild(tr);
   });
 
@@ -489,7 +501,7 @@ function showResultDirect(key) {
   tb.innerHTML = '';
   Object.entries(SERVICES).forEach(([k, s]) => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td><b>${s.name}</b>${k === key ? ' ' : ''}</td><td class="price-cell">${yen(s.price)}</td><td>${s.strength}</td>`;
+    tr.innerHTML = `<td><b>${s.name}</b>${k === key ? ' ' : ''}</td><td class="price-cell">${yen(s.price)}</td><td>${s.free || '—'}</td><td>${s.upper || '—'}</td><td>${s.strength}</td>`;
     tb.appendChild(tr);
   });
 
