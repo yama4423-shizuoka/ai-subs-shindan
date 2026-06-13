@@ -19,6 +19,54 @@
   <meta name="twitter:description" content="8つの質問に答えるだけで、あなたに最適なAIサブスクを無料診断。">
   <meta name="twitter:image" content="https://ai-subs-shindan.vercel.app/ai-subs-ogp.svg">
   <script defer src="/_vercel/insights/script.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "有料プランと無料版は何が違うの?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "主な違いは「利用制限」と「使えるモデルのグレード」です。無料版は1日の使用回数に上限があり、高性能モデルへのアクセスが制限される場合があります。有料プランでは制限が大幅に緩和され、画像生成・音声会話・長文処理などの追加機能も利用できるようになります。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "複数のAIサブスクに入る意味はある?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "用途が明確に分かれる場合はあります。たとえば「文章作成はClaude Pro、エディタ内コード補完はGitHub Copilot」という組み合わせは開発者に人気です。ただし最初は1本に絞り、無料枠では補えない不満が出てきてから追加するのが費用を抑えるコツです。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "サブスクはいつでも解約できる?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "はい。ChatGPT Plus・Claude Pro・Gemini・Perplexity Proなど主要サービスはいずれも月次契約で、いつでも解約手続きができます。解約後も残りの契約期間は引き続き利用でき、翌月分は請求されません。詳細は各サービスの公式サイトでご確認ください。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "どのAIが一番賢いの?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "「賢さ」はベンチマークやタスクによって異なります。論文要約・長文読解・コーディングではClaude、幅広い用途ではChatGPT、Googleサービス連携や検索連動ではGeminiが強いなど、得意領域がそれぞれ異なります。本診断では「あなたの使い方に合うAI」を選べるよう設計しています。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "会社・仕事で使う場合は個人プランでよい?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "小規模な個人利用であれば個人プランで問題ないケースも多いですが、業務データを扱う場合はデータプライバシーの観点から企業向けプラン(ChatGPT Team/Enterprise、Claude for Workなど)の検討をおすすめします。企業向けプランでは会話データが学習に使われないなどの保証が加わります。詳細は各サービスの法人向けページでご確認ください。"
+        }
+      }
+    ]
+  }
+  </script>
   <style>
     :root {
       --bg:#07070f; --s1:#0e0e1a; --s2:#13131f; --s3:#1a1a2a;
@@ -153,6 +201,20 @@
     footer a { color:var(--acc2); text-decoration:none; }
     footer a:hover { text-decoration:underline; }
 
+    /* FAQ */
+    .faq { margin-top:40px; padding-top:24px; border-top:1px solid var(--bd); }
+    .faq-title { font-size:1.05rem; font-weight:800; margin-bottom:14px; }
+    .faq-item { border:1px solid var(--bd); border-radius:var(--r2); margin-bottom:8px; overflow:hidden; }
+    .faq-q {
+      font-size:.92rem; font-weight:700; color:var(--tx); padding:14px 18px;
+      cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center;
+      background:var(--s1); user-select:none;
+    }
+    .faq-q::-webkit-details-marker { display:none; }
+    .faq-q::after { content:'+'; color:var(--acc2); font-size:1.1rem; flex-shrink:0; margin-left:12px; }
+    details[open] > .faq-q::after { content:'\2212'; }
+    .faq-a { font-size:.86rem; color:var(--tx3); line-height:1.8; padding:12px 18px 16px; background:var(--s2); border-top:1px solid var(--bd); }
+
     @media (max-width:520px) {
       .wrapper { padding:16px 14px 48px; }
       .hero { padding:32px 0 24px; }
@@ -244,6 +306,30 @@
   <footer>
      動画サブスクの最適化は姉妹サイト <a href="https://streaming-optimizer-sigma.vercel.app/">サブスク診断</a> へ
   </footer>
+
+  <section class="faq" aria-label="よくある質問">
+    <h2 class="faq-title">よくある質問</h2>
+    <details class="faq-item">
+      <summary class="faq-q">有料プランと無料版は何が違うの?</summary>
+      <div class="faq-a">主な違いは「利用制限」と「使えるモデルのグレード」です。無料版は1日の使用回数に上限があり、高性能モデルへのアクセスが制限される場合があります。有料プランでは制限が大幅に緩和され、画像生成・音声会話・長文処理などの追加機能も利用できるようになります。</div>
+    </details>
+    <details class="faq-item">
+      <summary class="faq-q">複数のAIサブスクに入る意味はある?</summary>
+      <div class="faq-a">用途が明確に分かれる場合はあります。たとえば「文章作成はClaude Pro、エディタ内コード補完はGitHub Copilot」という組み合わせは開発者に人気です。ただし最初は1本に絞り、無料枠では補えない不満が出てきてから追加するのが費用を抑えるコツです。</div>
+    </details>
+    <details class="faq-item">
+      <summary class="faq-q">サブスクはいつでも解約できる?</summary>
+      <div class="faq-a">はい。ChatGPT Plus・Claude Pro・Gemini・Perplexity Proなど主要サービスはいずれも月次契約で、いつでも解約手続きができます。解約後も残りの契約期間は引き続き利用でき、翌月分は請求されません。詳細は各サービスの公式サイトでご確認ください。</div>
+    </details>
+    <details class="faq-item">
+      <summary class="faq-q">どのAIが一番賢いの?</summary>
+      <div class="faq-a">「賢さ」はベンチマークやタスクによって異なります。論文要約・長文読解・コーディングではClaude、幅広い用途ではChatGPT、Googleサービス連携や検索連動ではGeminiが強いなど、得意領域がそれぞれ異なります。本診断では「あなたの使い方に合うAI」を選べるよう設計しています。</div>
+    </details>
+    <details class="faq-item">
+      <summary class="faq-q">会社・仕事で使う場合は個人プランでよい?</summary>
+      <div class="faq-a">小規模な個人利用であれば個人プランで問題ないケースも多いですが、業務データを扱う場合はデータプライバシーの観点から企業向けプラン(ChatGPT Team/Enterprise、Claude for Workなど)の検討をおすすめします。企業向けプランでは会話データが学習に使われないなどの保証が加わります。詳細は各サービスの法人向けページでご確認ください。</div>
+    </details>
+  </section>
 </div>
 
 <script>
