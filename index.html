@@ -98,8 +98,10 @@
     }
     .winner-label { font-size:.72rem; font-weight:800; color:var(--acc2); letter-spacing:.12em; margin-bottom:10px; }
     .winner-name { font-size:1.7rem; font-weight:900; margin-bottom:4px; }
-    .winner-price { font-size:1rem; color:var(--tx3); font-weight:700; margin-bottom:14px; }
+    .winner-price { font-size:1rem; color:var(--tx3); font-weight:700; margin-bottom:6px; }
     .winner-price b { color:var(--green); font-size:1.25rem; }
+    .winner-cost { font-size:.84rem; color:var(--tx2); margin-bottom:12px; }
+    .winner-cost b { color:var(--acc2); font-size:.95rem; }
     .winner-desc { font-size:.92rem; color:var(--tx3); line-height:1.8; }
     .reasons { margin-top:18px; text-align:left; background:var(--s1); border:1px solid var(--bd); border-radius:var(--r2); padding:16px 18px; }
     .reasons h3 { font-size:.82rem; color:var(--acc2); font-weight:800; margin-bottom:10px; }
@@ -211,6 +213,7 @@
       <div class="winner-label">あなたへのおすすめ No.1</div>
       <div class="winner-name" id="winnerName"></div>
       <div class="winner-price" id="winnerPrice"></div>
+      <div class="winner-cost" id="winnerCost" style="display:none"></div>
       <div class="winner-desc" id="winnerDesc"></div>
       <div class="reasons">
         <h3>おすすめの理由</h3>
@@ -409,6 +412,22 @@ function showResult() {
 
   document.getElementById('winnerName').textContent = winner.name;
   document.getElementById('winnerPrice').innerHTML = `月額 <b>${winner.price === 0 ? '0円' : '約' + winner.price.toLocaleString() + '円'}</b>`;
+
+  // コスパ計算: Q2(利用頻度)の回答から1日あたりの料金を算出
+  const freqDays = [30, 30, 12, 4]; // 毎日がっつり/毎日ちょこちょこ/週に数回/たまに
+  const freqLabels = ['毎日', '毎日', '週に数回', 'たまに'];
+  const daysPerMonth = freqDays[answers[1]] ?? 30;
+  const freqLabel = freqLabels[answers[1]] ?? '';
+  const costEl = document.getElementById('winnerCost');
+  if (winner.price === 0) {
+    costEl.innerHTML = `利用頻度(${freqLabel})で換算: <b>1日あたり 0円</b>`;
+    costEl.style.display = 'block';
+  } else {
+    const perDay = Math.round(winner.price / daysPerMonth);
+    costEl.innerHTML = `利用頻度(${freqLabel})で換算: <b>1日あたり約${perDay.toLocaleString()}円</b>`;
+    costEl.style.display = 'block';
+  }
+
   document.getElementById('winnerDesc').textContent = winner.desc;
 
   // 理由を生成
@@ -476,6 +495,7 @@ function showResultDirect(key) {
   document.getElementById('winnerName').textContent = svc.name;
   document.getElementById('winnerPrice').innerHTML =
     `月額 <b>${svc.price === 0 ? '0円' : '約' + svc.price.toLocaleString() + '円'}</b>`;
+  document.getElementById('winnerCost').style.display = 'none';
   document.getElementById('winnerDesc').textContent = svc.desc;
 
   const ul = document.getElementById('reasonsList');
