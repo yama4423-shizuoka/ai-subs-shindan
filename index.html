@@ -201,6 +201,16 @@
     footer a { color:var(--acc2); text-decoration:none; }
     footer a:hover { text-decoration:underline; }
 
+    /* SERVICE DETAIL */
+    .svc-detail { margin-top:36px; padding-top:24px; border-top:1px solid var(--bd); }
+    .svc-detail-title { font-size:1.05rem; font-weight:800; margin-bottom:14px; }
+    .svc-detail-item { border:1px solid var(--bd); border-radius:var(--r2); background:var(--s1); padding:18px 20px; margin-bottom:10px; }
+    .svc-detail-item h3 { font-size:.95rem; font-weight:800; color:var(--tx); margin-bottom:8px; }
+    .svc-detail-item p { font-size:.86rem; color:var(--tx3); line-height:1.8; }
+    .svc-detail-item ul { margin-top:8px; padding-left:0; }
+    .svc-detail-item ul li { list-style:none; font-size:.82rem; color:var(--tx2); padding:2px 0; display:flex; gap:8px; line-height:1.6; }
+    .svc-detail-item ul li::before { content:'→'; color:var(--acc2); flex-shrink:0; }
+
     /* FAQ */
     .faq { margin-top:40px; padding-top:24px; border-top:1px solid var(--bd); }
     .faq-title { font-size:1.05rem; font-weight:800; margin-bottom:14px; }
@@ -301,6 +311,64 @@
     </div>
 
     <p class="disclaimer">※ 料金は日本円目安であり、為替・改定により変動します。ご契約前に各サービスの公式サイトで最新の価格・機能をご確認ください。本診断は使い方の傾向に基づく参考情報です。料金情報の最終確認日: 2026年6月11日</p>
+
+    <section class="svc-detail" aria-label="各AIサービスの詳細解説">
+      <h2 class="svc-detail-title">各AIサービスの特徴・詳細解説</h2>
+
+      <div class="svc-detail-item">
+        <h3>ChatGPT Plus — 月額目安 約3,000円</h3>
+        <p>OpenAIのGPT-4oを中心とした万能型サービス。文章作成から画像生成(DALL-E)、音声会話、ファイル分析まで1つのサブスクでカバーできます。カスタムGPTs(専用AI)を利用できる点も特徴で、幅広い用途に対応する定番の選択肢です。</p>
+        <ul>
+          <li>得意: 文章作成・要約・アイデア出し・画像生成・音声会話</li>
+          <li>こんな人に: 用途が多岐にわたり、1本で済ませたい方</li>
+        </ul>
+      </div>
+
+      <div class="svc-detail-item">
+        <h3>Claude Pro — 月額目安 約3,300円(税込)</h3>
+        <p>Anthropicが開発する、長文読解とコーディング支援に定評のあるAI。大量のトークンを一度に処理できるコンテキスト窓により、長い資料や大きなコードベースをまとめて扱えます。文章のトーンが自然で、ビジネス・技術文書の作成にも適しています。</p>
+        <ul>
+          <li>得意: 長文読解・コード生成・文章作成・論文分析</li>
+          <li>こんな人に: 長い資料を扱う研究者・ライター・エンジニア</li>
+        </ul>
+      </div>
+
+      <div class="svc-detail-item">
+        <h3>Google AI Pro (Gemini) — 月額目安 約2,900円</h3>
+        <p>GmailやGoogleドキュメント・カレンダーなどGoogleサービスと深く連携できるのが最大の特徴です。YouTubeの動画内容を要約したり、Googleドライブのファイルを参照しながら回答したりと、Google環境を日常的に使う人に特に強みを発揮します。</p>
+        <ul>
+          <li>得意: Google連携・検索連動・動画理解・マルチモーダル</li>
+          <li>こんな人に: Google Workspaceを日常的に使うビジネスパーソン</li>
+        </ul>
+      </div>
+
+      <div class="svc-detail-item">
+        <h3>GitHub Copilot Pro — 月額目安 約1,500円</h3>
+        <p>VS CodeやJetBrainsなどのコードエディタに直接組み込まれ、コードを書きながらリアルタイムで補完・提案してくれる開発者向けサービスです。AIとのチャットでレビューやデバッグの相談もでき、主要サービスの中で最も低価格です。</p>
+        <ul>
+          <li>得意: コード補完・レビュー・デバッグ支援</li>
+          <li>こんな人に: 日常的にコードを書くエンジニア・開発者</li>
+        </ul>
+      </div>
+
+      <div class="svc-detail-item">
+        <h3>Perplexity Pro — 月額目安 約3,000円</h3>
+        <p>回答に必ず出典URLを付けて返してくれる、調査・リサーチ特化型のAI検索エンジンです。リアルタイムのWeb情報をもとに回答するため、最新ニュースや市場調査、ファクトチェックに向いています。「ネット検索をAIに置き換えたい」という方に最適です。</p>
+        <ul>
+          <li>得意: 出典付き検索・リアルタイム情報・ファクトチェック</li>
+          <li>こんな人に: 記者・研究者・情報収集が多いビジネスパーソン</li>
+        </ul>
+      </div>
+
+      <div class="svc-detail-item">
+        <h3>無料プランの組み合わせ — 0円</h3>
+        <p>ChatGPT・Claude・Geminiはいずれも無料枠を提供しており、それぞれを使い分けることでコストをかけずにAIを活用できます。利用頻度が低い方や試用中の方には有料プランなしで十分なケースも多く、物足りなさを感じた時点で有料に移行するのがおすすめです。</p>
+        <ul>
+          <li>得意: コスト0円・複数サービスを気軽に試せる</li>
+          <li>こんな人に: AIを使い始めたばかり・利用頻度が低い方</li>
+        </ul>
+      </div>
+    </section>
   </div>
 
   <footer>
