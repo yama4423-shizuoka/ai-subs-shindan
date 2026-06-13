@@ -128,6 +128,12 @@
       transition:border-color .15s, background .15s, transform .1s;
     }
     .opt:hover { border-color:var(--acc); background:rgba(124,111,245,.07); transform:translateX(3px); }
+    .opt.opt-selected { border-color:var(--acc); background:rgba(124,111,245,.1); }
+    .opt-check { width:18px; height:18px; border:2px solid var(--bd); border-radius:4px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:.75rem; color:var(--green); font-weight:800; }
+    .opt-selected .opt-check { border-color:var(--acc); }
+    .q-multi-hint { font-size:.78rem; color:var(--tx2); margin-bottom:12px; }
+    .btn-multi-next { margin-top:14px; width:100%; border:none; cursor:pointer; background:linear-gradient(135deg,var(--acc),#60a5fa); color:#fff; font-size:1rem; font-weight:800; padding:14px; border-radius:12px; transition:opacity .15s; }
+    .btn-multi-next:disabled { opacity:.45; cursor:default; }
     .opt .emoji { font-size:1.2rem; flex-shrink:0; }
     .opt small { display:block; color:var(--tx2); font-weight:500; font-size:.78rem; margin-top:2px; }
     .btn-back-q {
@@ -447,7 +453,7 @@ const SERVICES = {
 };
 
 const QUESTIONS = [
-  { title: 'AIで一番やりたいことは?', opts: [
+  { title: 'AIをどんな用途で使いたい?', multi: true, opts: [
     { e:'', t:'文章作成・メール・資料づくり', s:{claude:3, chatgpt:2, gemini:1} },
     { e:'', t:'プログラミング・アプリ開発', s:{copilot:3, claude:3, chatgpt:1} },
     { e:'', t:'調べ物・リサーチ', s:{perplexity:3, gemini:2, chatgpt:1} },
@@ -497,6 +503,7 @@ let current = 0;
 let scores = {};
 let budget = 3000;
 let answers = [];
+let multiSelected = [];
 
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -505,7 +512,7 @@ function show(id) {
 }
 
 function startQuiz() {
-  current = 0; scores = {}; budget = 3000; answers = [];
+  current = 0; scores = {}; budget = 3000; answers = []; multiSelected = [];
   Object.keys(SERVICES).forEach(k => scores[k] = 0);
   renderQuestion();
   show('screen-quiz');
@@ -520,13 +527,41 @@ function renderQuestion() {
   document.getElementById('qTitle').textContent = q.title;
   const box = document.getElementById('opts');
   box.innerHTML = '';
-  q.opts.forEach((o, i) => {
-    const b = document.createElement('button');
-    b.className = 'opt';
-    b.innerHTML = `<span>${o.t}</span>`;
-    b.onclick = () => answer(i);
-    box.appendChild(b);
-  });
+  if (q.multi) {
+    const hint = document.createElement('p');
+    hint.className = 'q-multi-hint';
+    hint.textContent = '当てはまるものをすべて選んでください(複数選択可)';
+    box.appendChild(hint);
+    q.opts.forEach((o, i) => {
+      const b = document.createElement('button');
+      b.className = 'opt' + (multiSelected.includes(i) ? ' opt-selected' : '');
+      b.setAttribute('data-optidx', i);
+      const chk = document.createElement('span');
+      chk.className = 'opt-check';
+      chk.textContent = multiSelected.includes(i) ? '✓' : '';
+      b.appendChild(chk);
+      const lbl = document.createElement('span');
+      lbl.textContent = o.t;
+      b.appendChild(lbl);
+      b.onclick = () => toggleMultiOpt(i);
+      box.appendChild(b);
+    });
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'btn-multi-next';
+    nextBtn.id = 'btnMultiNext';
+    nextBtn.textContent = '次へ →';
+    nextBtn.disabled = multiSelected.length === 0;
+    nextBtn.onclick = submitMulti;
+    box.appendChild(nextBtn);
+  } else {
+    q.opts.forEach((o, i) => {
+      const b = document.createElement('button');
+      b.className = 'opt';
+      b.innerHTML = `<span>${o.t}</span>`;
+      b.onclick = () => answer(i);
+      box.appendChild(b);
+    });
+  }
   document.getElementById('btnBackQ').style.visibility = current === 0 ? 'hidden' : 'visible';
 }
 
@@ -540,13 +575,52 @@ function answer(i) {
   else showResult();
 }
 
+function toggleMultiOpt(i) {
+  const idx = multiSelected.indexOf(i);
+  const btn = document.querySelector(`#opts [data-optidx="${i}"]`);
+  if (idx === -1) {
+    multiSelected.push(i);
+    if (btn) { btn.classList.add('opt-selected'); const c = btn.querySelector('.opt-check'); if (c) c.textContent = '✓'; }
+  } else {
+    multiSelected.splice(idx, 1);
+    if (btn) { btn.classList.remove('opt-selected'); const c = btn.querySelector('.opt-check'); if (c) c.textContent = ''; }
+  }
+  const nb = document.getElementById('btnMultiNext');
+  if (nb) nb.disabled = multiSelected.length === 0;
+}
+
+function submitMulti() {
+  if (multiSelected.length === 0) return;
+  answers[current] = [...multiSelected];
+  const q = QUESTIONS[current];
+  const n = multiSelected.length;
+  multiSelected.forEach(i => {
+    const o = q.opts[i];
+    if (o.s) Object.entries(o.s).forEach(([k, v]) => { scores[k] += v / n; });
+  });
+  multiSelected = [];
+  current++;
+  if (current < QUESTIONS.length) renderQuestion();
+  else showResult();
+}
+
 function prevQuestion() {
   if (current === 0) return;
   current--;
-  // 戻ったぶんのスコアを取り消す
-  const o = QUESTIONS[current].opts[answers[current]];
-  if (o.s) Object.entries(o.s).forEach(([k, v]) => scores[k] -= v);
-  if (o.budget !== undefined) budget = 3000;
+  const q = QUESTIONS[current];
+  if (q.multi) {
+    const sel = Array.isArray(answers[current]) ? answers[current] : [];
+    const n = sel.length;
+    if (n > 0) sel.forEach(i => {
+      const o = q.opts[i];
+      if (o && o.s) Object.entries(o.s).forEach(([k, v]) => { scores[k] -= v / n; });
+    });
+    multiSelected = [...sel];
+  } else {
+    const o = QUESTIONS[current].opts[answers[current]];
+    if (o && o.s) Object.entries(o.s).forEach(([k, v]) => scores[k] -= v);
+    if (o && o.budget !== undefined) budget = 3000;
+  }
   renderQuestion();
 }
 
@@ -588,8 +662,14 @@ function showResult() {
   const reasons = [];
   reasons.push(winner.strength);
   const useAns = answers[0];
-  const useTxt = ['文章作成・資料づくり中心の使い方', 'プログラミング中心の使い方', 'リサーチ中心の使い方', '画像・動画生成を重視する使い方', '相談・アイデア出し中心の使い方'][useAns];
-  if (useTxt) reasons.push(`あなたの「${useTxt}」と相性が良い`);
+  if (Array.isArray(useAns) && useAns.length > 0) {
+    const labels = ['文章作成・資料づくり', 'プログラミング', 'リサーチ', '画像・動画生成', '相談・アイデア出し'];
+    const sel = useAns.map(i => labels[i]).filter(Boolean);
+    if (sel.length > 0) reasons.push(`あなたの「${sel.join('・')}」の使い方と相性が良い`);
+  } else {
+    const useTxt = ['文章作成・資料づくり中心の使い方', 'プログラミング中心の使い方', 'リサーチ中心の使い方', '画像・動画生成を重視する使い方', '相談・アイデア出し中心の使い方'][useAns];
+    if (useTxt) reasons.push(`あなたの「${useTxt}」と相性が良い`);
+  }
   if (budget === 0) reasons.push('予算0円の条件内でベストな構成');
   else if (winner.price <= budget) reasons.push(`月${budget === Infinity ? '予算' : '¥' + budget.toLocaleString()}の範囲に収まる`);
   const ul = document.getElementById('reasonsList');
