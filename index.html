@@ -70,12 +70,21 @@
   <style>
     :root {
       --bg:#07070f; --s1:#0e0e1a; --s2:#13131f; --s3:#1a1a2a;
-      --bd:#22223a; --tx:#f0f0fa; --tx2:#6868a0; --tx3:#9090c0;
+      --bd:#22223a; --tx:#f0f0fa; --tx2:#7878b0; --tx3:#9090c0;
       --acc:#7c6ff5; --acc2:#a89cf7; --accG:rgba(124,111,245,.18);
       --green:#34d399; --yellow:#fbbf24; --red:#f87171; --blue:#60a5fa;
       --r:16px; --r2:10px;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
+    .skip-link {
+      position:absolute; left:-9999px; top:auto; z-index:999;
+      background:var(--acc); color:#fff; font-weight:700; font-size:.9rem;
+      padding:8px 18px; border-radius:0 0 10px 10px; text-decoration:none;
+    }
+    .skip-link:focus { left:50%; transform:translateX(-50%); }
+    button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
+      outline:2px solid var(--acc2); outline-offset:3px; border-radius:4px;
+    }
     body {
       background:var(--bg); color:var(--tx);
       font-family:'Segoe UI','Hiragino Sans','Yu Gothic UI',system-ui,sans-serif;
@@ -241,13 +250,14 @@
   </style>
 </head>
 <body>
-<div class="wrapper">
+<a class="skip-link" href="#main-content">コンテンツへスキップ</a>
+<div class="wrapper" id="main-content">
 
   <!-- START -->
   <div id="screen-start" class="screen active">
     <div class="hero">
       <div class="badge">AI Subs Checker</div>
-      <h1>AIサブスク診断<br><span class="grad">あなたに合うAI課金はどれ?</span></h1>
+      <h1 tabindex="-1">AIサブスク診断<br><span class="grad">あなたに合うAI課金はどれ?</span></h1>
       <p>ChatGPT Plus? Claude Pro? Gemini? それとも無料で十分?<br>8つの質問に答えるだけで、あなたの使い方に合った<br>最適なAIサブスクが分かります。</p>
       <div class="hero-meta">
         <span> 約1分</span><span> 8問</span><span> 無料・登録不要</span>
@@ -268,11 +278,11 @@
   <div id="screen-quiz" class="screen">
     <div class="progress-wrap">
       <div class="progress-label"><span id="qCounter">Q1 / 8</span><span id="qPercent">0%</span></div>
-      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="診断の進行状況" id="progressBar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
     </div>
     <div class="q-card">
       <div class="q-num" id="qNum"></div>
-      <div class="q-title" id="qTitle"></div>
+      <div class="q-title" id="qTitle" tabindex="-1"></div>
       <div class="opts" id="opts"></div>
     </div>
     <button class="btn-back-q" id="btnBackQ" onclick="prevQuestion()">← ひとつ前に戻る</button>
@@ -507,8 +517,11 @@ let multiSelected = [];
 
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const el = document.getElementById(id);
+  el.classList.add('active');
   window.scrollTo({ top: 0 });
+  const focusEl = el.querySelector('[tabindex="-1"]');
+  if (focusEl) focusEl.focus({ preventScroll: true });
 }
 
 function startQuiz() {
@@ -520,9 +533,12 @@ function startQuiz() {
 
 function renderQuestion() {
   const q = QUESTIONS[current];
+  const pct = Math.round(current / QUESTIONS.length * 100);
   document.getElementById('qCounter').textContent = `Q${current+1} / ${QUESTIONS.length}`;
-  document.getElementById('qPercent').textContent = Math.round(current / QUESTIONS.length * 100) + '%';
-  document.getElementById('progressFill').style.width = (current / QUESTIONS.length * 100) + '%';
+  document.getElementById('qPercent').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+  const pb = document.getElementById('progressBar');
+  if (pb) pb.setAttribute('aria-valuenow', pct);
   document.getElementById('qNum').textContent = `QUESTION ${current+1}`;
   document.getElementById('qTitle').textContent = q.title;
   const box = document.getElementById('opts');
@@ -536,6 +552,7 @@ function renderQuestion() {
       const b = document.createElement('button');
       b.className = 'opt' + (multiSelected.includes(i) ? ' opt-selected' : '');
       b.setAttribute('data-optidx', i);
+      b.setAttribute('aria-pressed', multiSelected.includes(i) ? 'true' : 'false');
       const chk = document.createElement('span');
       chk.className = 'opt-check';
       chk.textContent = multiSelected.includes(i) ? '✓' : '';
@@ -580,10 +597,10 @@ function toggleMultiOpt(i) {
   const btn = document.querySelector(`#opts [data-optidx="${i}"]`);
   if (idx === -1) {
     multiSelected.push(i);
-    if (btn) { btn.classList.add('opt-selected'); const c = btn.querySelector('.opt-check'); if (c) c.textContent = '✓'; }
+    if (btn) { btn.classList.add('opt-selected'); btn.setAttribute('aria-pressed', 'true'); const c = btn.querySelector('.opt-check'); if (c) c.textContent = '✓'; }
   } else {
     multiSelected.splice(idx, 1);
-    if (btn) { btn.classList.remove('opt-selected'); const c = btn.querySelector('.opt-check'); if (c) c.textContent = ''; }
+    if (btn) { btn.classList.remove('opt-selected'); btn.setAttribute('aria-pressed', 'false'); const c = btn.querySelector('.opt-check'); if (c) c.textContent = ''; }
   }
   const nb = document.getElementById('btnMultiNext');
   if (nb) nb.disabled = multiSelected.length === 0;
@@ -717,6 +734,7 @@ function showResult() {
 
   document.getElementById('sharedNote').style.display = 'none';
   history.replaceState(null, '', '?r=' + winner.key);
+  document.getElementById('winnerName').setAttribute('tabindex', '-1');
   show('screen-result');
 }
 
@@ -765,6 +783,7 @@ function showResultDirect(key) {
     'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(shareUrl);
 
   document.getElementById('sharedNote').style.display = 'block';
+  document.getElementById('winnerName').setAttribute('tabindex', '-1');
   show('screen-result');
 }
 
