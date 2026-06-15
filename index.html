@@ -169,6 +169,12 @@
     .winner-cost { font-size:.84rem; color:var(--tx2); margin-bottom:12px; }
     .winner-cost b { color:var(--acc2); font-size:.95rem; }
     .winner-desc { font-size:.92rem; color:var(--tx3); line-height:1.8; }
+    .winner-personal-note {
+      font-size:.86rem; color:var(--tx); line-height:1.8;
+      margin:14px 0 0; padding:10px 14px;
+      background:rgba(124,111,245,.07); border-left:3px solid var(--acc2);
+      border-radius:0 8px 8px 0; text-align:left;
+    }
     .reasons { margin-top:18px; text-align:left; background:var(--s1); border:1px solid var(--bd); border-radius:var(--r2); padding:16px 18px; }
     .reasons h3 { font-size:.82rem; color:var(--acc2); font-weight:800; margin-bottom:10px; }
     .reasons li { list-style:none; font-size:.86rem; color:var(--tx3); padding:4px 0; display:flex; gap:8px; line-height:1.6; }
@@ -306,6 +312,7 @@
       <div class="winner-price" id="winnerPrice"></div>
       <div class="winner-cost" id="winnerCost" style="display:none"></div>
       <div class="winner-desc" id="winnerDesc"></div>
+      <p class="winner-personal-note" id="winnerPersonalNote" style="display:none"></p>
       <div class="reasons">
         <h3>おすすめの理由</h3>
         <ul id="reasonsList"></ul>
@@ -646,6 +653,86 @@ function prevQuestion() {
 
 function yen(p) { return p === 0 ? '¥0' : '約¥' + p.toLocaleString() + '/月'; }
 
+function buildPersonalReason(winnerKey, answersArr) {
+  const svcName = SERVICES[winnerKey].name;
+  const freqLabels = ['毎日がっつり', '毎日ちょこちょこ', '週に数回', 'たまに'];
+  const freq = freqLabels[answersArr[1]] ?? '';
+
+  if (winnerKey === 'free') {
+    const freqPart = freq ? freq + 'という利用ペース' : '現在の利用ペース';
+    return freqPart + 'であれば各社の無料枠で十分対応できます。まずは0円でスタートし、物足りなさを感じたときに有料プランへ移行するのがコストを抑えるコツです。';
+  }
+
+  // 各設問のうち winnerKey に正のスコアを与えた回答を因子として収集
+  const factors = [];
+  const useLabels = ['文章作成・資料づくり', 'プログラミング', 'リサーチ・調べ物', '画像・動画生成', '相談・アイデア出し'];
+
+  // Q1: 用途(複数選択)
+  const q1 = answersArr[0];
+  if (q1 !== undefined) {
+    const idxs = Array.isArray(q1) ? q1 : [q1];
+    const n = idxs.length || 1;
+    let sc = 0;
+    const texts = [];
+    idxs.forEach(i => {
+      const v = QUESTIONS[0].opts[i]?.s?.[winnerKey] || 0;
+      if (v > 0) { sc += v / n; texts.push(useLabels[i]); }
+    });
+    if (texts.length > 0) factors.push({ score: sc, label: texts.join('・') });
+  }
+
+  // Q4: コード
+  const q4v = QUESTIONS[3].opts[answersArr[3]]?.s?.[winnerKey];
+  if (q4v > 0) factors.push({ score: q4v, label: 'コーディング支援' });
+
+  // Q5: 画像・動画
+  const q5v = QUESTIONS[4].opts[answersArr[4]]?.s?.[winnerKey];
+  if (q5v > 0) factors.push({ score: q5v, label: '画像・動画生成' });
+
+  // Q6: Web検索
+  const q6v = QUESTIONS[5].opts[answersArr[5]]?.s?.[winnerKey];
+  if (q6v > 0) factors.push({ score: q6v, label: 'Web検索・最新情報' });
+
+  // Q7: Google連携
+  const q7v = QUESTIONS[6].opts[answersArr[6]]?.s?.[winnerKey];
+  if (q7v > 0) factors.push({ score: q7v, label: 'Googleサービス連携' });
+
+  factors.sort((a, b) => b.score - a.score);
+
+  const top = factors[0];
+  const second = factors[1];
+  const freqPart = freq ? freq + '使いたい' : '';
+
+  // 1文目: 上位因子 + 頻度から導出
+  let s1;
+  if (top && freqPart) {
+    s1 = '「' + top.label + '」を目的に' + freqPart + 'とのことから、' + svcName + 'があなたの使い方に最もマッチします。';
+  } else if (top) {
+    s1 = '「' + top.label + '」のニーズに、' + svcName + 'が最もよく応えます。';
+  } else if (freqPart) {
+    s1 = freqPart + 'あなたには、' + svcName + 'がもっともバランスよく対応できます。';
+  } else {
+    s1 = svcName + 'があなたの使い方に最もよくマッチします。';
+  }
+
+  // 2文目: 2番目の因子、またはサービス固有の補足
+  const serviceClosings = {
+    chatgpt: '幅広い機能が揃っているため、用途が広がっても1本で対応し続けられます。',
+    claude: '長文読解や丁寧な文章生成での完成度が高く、じっくり考える作業に向いています。',
+    gemini: 'GoogleサービスとのAI連携は、日常のワークフローへの自然な組み込みを可能にします。',
+    copilot: 'エディタに直接統合されているため、開発の流れを止めずに補完・提案を受けられます。',
+    perplexity: '回答に出典が付くため、情報の正確さを確認しながら調査を進められます。',
+  };
+  const labelsOverlap = top && second && (
+    second.label.includes(top.label) || top.label.includes(second.label)
+  );
+  const s2 = (second && !labelsOverlap)
+    ? '「' + second.label + '」でも強みがあり、用途が広がっても対応できます。'
+    : (serviceClosings[winnerKey] || '');
+
+  return s1 + (s2 ? s2 : '');
+}
+
 function showResult() {
   const ranked = Object.entries(scores)
     .map(([k, v]) => ({ key: k, score: v, ...SERVICES[k] }))
@@ -677,6 +764,12 @@ function showResult() {
   }
 
   document.getElementById('winnerDesc').textContent = winner.desc;
+
+  // パーソナライズされたおすすめ理由を1〜2文で生成(上位スコア要因から自動組み立て)
+  const personalNote = buildPersonalReason(winner.key, answers);
+  const noteEl = document.getElementById('winnerPersonalNote');
+  noteEl.textContent = personalNote;
+  noteEl.style.display = personalNote ? 'block' : 'none';
 
   // 理由を生成
   const reasons = [];

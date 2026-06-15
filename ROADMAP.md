@@ -15,7 +15,7 @@
 - [x] アクセシビリティ監査: キーボード操作、aria属性、コントラスト比の改善
 - [x] 英語版ページ(/en.html)
 - [x] en.html: hreflang タグと index.html への alternate リンク追加(英語版 SEO 完全対応。`<link rel="alternate" hreflang="en">` と `<link rel="alternate" hreflang="ja">` を両ページに相互追加)
-- [ ] 診断結果 UX: winner サービスに「あなたにおすすめの理由」を1〜2文で動的生成して結果画面に追加(QUESTIONS の上位スコア要因から自動組み立て)
+- [x] 診断結果 UX: winner サービスに「あなたにおすすめの理由」を1〜2文で動的生成して結果画面に追加(QUESTIONS の上位スコア要因から自動組み立て)
 - [ ] モバイル最適化: 英語サービス名(GitHub Copilot Pro 等)の折り返し確認と font-size・white-space 調整、en.html でも同様に確認
 
 ## ルール
