@@ -169,6 +169,12 @@
     .winner-cost { font-size:.84rem; color:var(--tx2); margin-bottom:12px; }
     .winner-cost b { color:var(--acc2); font-size:.95rem; }
     .winner-desc { font-size:.92rem; color:var(--tx3); line-height:1.8; }
+    .winner-personal-note {
+      font-size:.86rem; color:var(--tx); line-height:1.8;
+      margin:14px 0 0; padding:10px 14px;
+      background:rgba(124,111,245,.07); border-left:3px solid var(--acc2);
+      border-radius:0 8px 8px 0; text-align:left;
+    }
     .reasons { margin-top:18px; text-align:left; background:var(--s1); border:1px solid var(--bd); border-radius:var(--r2); padding:16px 18px; }
     .reasons h3 { font-size:.82rem; color:var(--acc2); font-weight:800; margin-bottom:10px; }
     .reasons li { list-style:none; font-size:.86rem; color:var(--tx3); padding:4px 0; display:flex; gap:8px; line-height:1.6; }
@@ -307,6 +313,7 @@
       <div class="winner-price" id="winnerPrice"></div>
       <div class="winner-cost" id="winnerCost" style="display:none"></div>
       <div class="winner-desc" id="winnerDesc"></div>
+      <p class="winner-personal-note" id="winnerPersonalNote" style="display:none"></p>
       <div class="reasons">
         <h3>Why this fits you</h3>
         <ul id="reasonsList"></ul>
@@ -647,6 +654,78 @@ function prevQuestion() {
 
 function formatPrice(p) { return p === 0 ? '$0' : '~$' + p + '/mo'; }
 
+function buildPersonalReason(winnerKey, answersArr) {
+  const svcName = SERVICES[winnerKey].name;
+  const freqLabels = ['heavily every day', 'briefly every day', 'a few times a week', 'occasionally'];
+  const freq = freqLabels[answersArr[1]] ?? '';
+
+  if (winnerKey === 'free') {
+    const freqPart = freq ? `With your usage pattern (${freq})` : 'At your current usage level';
+    return freqPart + ', the free tiers across ChatGPT, Claude, and Gemini should cover your needs. Start at $0 and upgrade only when the limits become frustrating.';
+  }
+
+  const factors = [];
+  const useLabels = ['writing & docs', 'programming', 'research', 'image/video generation', 'brainstorming & ideas'];
+
+  const q1 = answersArr[0];
+  if (q1 !== undefined) {
+    const idxs = Array.isArray(q1) ? q1 : [q1];
+    const n = idxs.length || 1;
+    let sc = 0;
+    const texts = [];
+    idxs.forEach(i => {
+      const v = QUESTIONS[0].opts[i]?.s?.[winnerKey] || 0;
+      if (v > 0) { sc += v / n; texts.push(useLabels[i]); }
+    });
+    if (texts.length > 0) factors.push({ score: sc, label: texts.join(' and ') });
+  }
+
+  const q4v = QUESTIONS[3].opts[answersArr[3]]?.s?.[winnerKey];
+  if (q4v > 0) factors.push({ score: q4v, label: 'coding assistance' });
+
+  const q5v = QUESTIONS[4].opts[answersArr[4]]?.s?.[winnerKey];
+  if (q5v > 0) factors.push({ score: q5v, label: 'image & video generation' });
+
+  const q6v = QUESTIONS[5].opts[answersArr[5]]?.s?.[winnerKey];
+  if (q6v > 0) factors.push({ score: q6v, label: 'real-time web search' });
+
+  const q7v = QUESTIONS[6].opts[answersArr[6]]?.s?.[winnerKey];
+  if (q7v > 0) factors.push({ score: q7v, label: 'Google service integration' });
+
+  factors.sort((a, b) => b.score - a.score);
+
+  const top = factors[0];
+  const second = factors[1];
+  const freqPart = freq ? `using AI ${freq}` : '';
+
+  let s1;
+  if (top && freqPart) {
+    s1 = `Given your focus on "${top.label}" and ${freqPart}, ${svcName} is the best match for the way you work.`;
+  } else if (top) {
+    s1 = `For "${top.label}", ${svcName} is your strongest match.`;
+  } else if (freqPart) {
+    s1 = `${freqPart.charAt(0).toUpperCase() + freqPart.slice(1)}, ${svcName} gives you the best overall balance.`;
+  } else {
+    s1 = `${svcName} is the best match for the way you work.`;
+  }
+
+  const serviceClosings = {
+    chatgpt: 'Its broad feature set means you can handle almost any task — writing, images, voice, and more — with a single subscription.',
+    claude: 'Its long context window and nuanced writing quality make it a strong partner for deep, focused work.',
+    gemini: 'Tight integration with Google Search and Workspace lets you bring AI into your existing daily workflow naturally.',
+    copilot: 'Built directly into your editor, it delivers completions and suggestions without interrupting your coding flow.',
+    perplexity: 'Every answer comes with cited sources, so you can verify accuracy while you research.',
+  };
+  const labelsOverlap = top && second && (
+    second.label.includes(top.label) || top.label.includes(second.label)
+  );
+  const s2 = (second && !labelsOverlap)
+    ? `It also handles "${second.label}" well, giving you flexibility as your needs grow.`
+    : (serviceClosings[winnerKey] || '');
+
+  return s1 + (s2 ? ' ' + s2 : '');
+}
+
 function showResult() {
   const ranked = Object.entries(scores)
     .map(([k, v]) => ({ key: k, score: v, ...SERVICES[k] }))
@@ -677,6 +756,11 @@ function showResult() {
   }
 
   document.getElementById('winnerDesc').textContent = winner.desc;
+
+  const personalNote = buildPersonalReason(winner.key, answers);
+  const noteEl = document.getElementById('winnerPersonalNote');
+  noteEl.textContent = personalNote;
+  noteEl.style.display = personalNote ? 'block' : 'none';
 
   const reasons = [];
   reasons.push(winner.strength);
