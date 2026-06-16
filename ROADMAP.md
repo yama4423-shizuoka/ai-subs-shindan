@@ -23,6 +23,10 @@
 - [x] en.html: winner カードにパーソナライズ推薦文を追加 — 日本語版 index.html で実装済みの buildPersonalReason() に相当する英語文生成を en.html に実装する。現在、英語版の結果画面は日本語版に対してパーソナライズ文が未実装の状態。日英の UX 格差を解消する(社長指示 2026-06-15: 最優先)
 - [x] 結果画面のスコア透明化: winner が1位になった得点をもとに、2〜3位の候補サービスとの簡易スコア比較バーを結果画面に追加する。「なぜこのサービスが1位?」という疑問に視覚的に答え、診断根拠の透明性と結果への信頼感を高める(社長指示 2026-06-15: 次点)
 
+## フェーズ4バックログ(2026-06-16 QA検出)
+
+- [ ] en.html buildPersonalReason(): Q1 useLabels[3]「image/video generation」と Q5 factor ラベル「image & video generation」の区切り文字不一致により overlap チェック(.includes())が機能しない問題。Q1で画像/動画を選択かつ Q5 で Yes と回答したユーザーに第2文が重複表示される(例: 「なぜ Gemini?」の第2文に「image & video generation」が再掲)。useLabels[3] を「image & video generation」に統一するか、overlap チェックに単語レベルの部分一致を追加する(QA部検出 2026-06-16)
+
 ## ルール
 
 - 絵文字は使用しない(UI・文言・コミットメッセージとも。✓ ✕ → などの記号は可)
