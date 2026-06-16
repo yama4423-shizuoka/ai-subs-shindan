@@ -25,7 +25,7 @@
 
 ## フェーズ4バックログ(2026-06-16 QA検出)
 
-- [ ] en.html buildPersonalReason(): Q1 useLabels[3]「image/video generation」と Q5 factor ラベル「image & video generation」の区切り文字不一致により overlap チェック(.includes())が機能しない問題。Q1で画像/動画を選択かつ Q5 で Yes と回答したユーザーに第2文が重複表示される(例: 「なぜ Gemini?」の第2文に「image & video generation」が再掲)。useLabels[3] を「image & video generation」に統一するか、overlap チェックに単語レベルの部分一致を追加する(QA部検出 2026-06-16)
+- [x] en.html buildPersonalReason(): Q1 useLabels[3]「image/video generation」と Q5 factor ラベル「image & video generation」の区切り文字不一致により overlap チェック(.includes())が機能しない問題。Q1で画像/動画を選択かつ Q5 で Yes と回答したユーザーに第2文が重複表示される(例: 「なぜ Gemini?」の第2文に「image & video generation」が再掲)。useLabels[3] を「image & video generation」に統一するか、overlap チェックに単語レベルの部分一致を追加する(QA部検出 2026-06-16)
 
 ## ルール
 
