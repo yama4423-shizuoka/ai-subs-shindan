@@ -747,6 +747,43 @@ function buildPersonalReason(winnerKey, answersArr) {
   return s1 + (s2 ? ' ' + s2 : '');
 }
 
+function buildShareText(winnerKey, answersArr) {
+  const svc = SERVICES[winnerKey];
+  const useLabels = ['writing & docs', 'coding', 'research', 'image & video', 'brainstorming'];
+  const freqLabels = ['daily (1h+)', 'daily (briefly)', 'a few times/week', 'occasionally'];
+  const freq = freqLabels[answersArr[1]] ?? '';
+
+  if (winnerKey === 'free') {
+    return freq
+      ? `AI Sub Quiz: using AI ${freq}, free-tier combo is my best fit (FREE!). What's yours?`
+      : `Took the AI Subscription Quiz — free-tier combo is my best fit (FREE!)!`;
+  }
+
+  const q1 = answersArr[0];
+  let topUse = '';
+  if (q1 !== undefined) {
+    const idxs = Array.isArray(q1) ? q1 : [q1];
+    let bestIdx = -1, bestScore = -Infinity;
+    idxs.forEach(i => {
+      const v = (QUESTIONS[0].opts[i]?.s?.[winnerKey]) || 0;
+      if (v > bestScore) { bestScore = v; bestIdx = i; }
+    });
+    if (bestIdx >= 0) topUse = useLabels[bestIdx] || '';
+  }
+
+  const priceStr = `(~$${svc.price}/mo)`;
+
+  if (topUse && freq) {
+    return `AI Sub Quiz: for ${topUse} ${freq}, my #1 AI pick is "${svc.name}" ${priceStr}. What's yours?`;
+  } else if (topUse) {
+    return `AI Sub Quiz: for ${topUse}, my best AI fit is "${svc.name}" ${priceStr}. What's yours?`;
+  } else if (freq) {
+    return `AI Sub Quiz: using AI ${freq}, my #1 pick is "${svc.name}" ${priceStr}. What's yours?`;
+  } else {
+    return `Took the AI Subscription Quiz — my best fit is "${svc.name}" ${priceStr}!`;
+  }
+}
+
 function showResult() {
   const ranked = Object.entries(scores)
     .map(([k, v]) => ({ key: k, score: v, ...SERVICES[k] }))
@@ -851,7 +888,7 @@ function showResult() {
     tb.appendChild(tr);
   });
 
-  const text = `Took the AI Subscription Quiz — my best fit is "${winner.name}"${winner.price === 0 ? ' (FREE!)' : ` (~$${winner.price}/mo)`}!`;
+  const text = buildShareText(winner.key, answers);
   const shareUrl = 'https://ai-subs-shindan.vercel.app/en?r=' + winner.key;
   document.getElementById('btnShare').href =
     'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(shareUrl);

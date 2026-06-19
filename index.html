@@ -754,6 +754,43 @@ function buildPersonalReason(winnerKey, answersArr) {
   return s1 + (s2 ? s2 : '');
 }
 
+function buildShareText(winnerKey, answersArr) {
+  const svc = SERVICES[winnerKey];
+  const useLabels = ['文章作成・資料づくり', 'プログラミング', 'リサーチ・調べ物', '画像・動画生成', '相談・アイデア出し'];
+  const freqLabels = ['毎日がっつり', '毎日ちょこちょこ', '週に数回', 'たまに'];
+  const freq = freqLabels[answersArr[1]] ?? '';
+
+  if (winnerKey === 'free') {
+    return freq
+      ? `#AIサブスク診断 ${freq}使いたい私には「無料プランの組み合わせ」(0円!)が最適らしい!`
+      : `AIサブスク診断やってみた 私に合うのは「無料プランの組み合わせ」(0円!)だった!`;
+  }
+
+  const q1 = answersArr[0];
+  let topUse = '';
+  if (q1 !== undefined) {
+    const idxs = Array.isArray(q1) ? q1 : [q1];
+    let bestIdx = -1, bestScore = -Infinity;
+    idxs.forEach(i => {
+      const v = (QUESTIONS[0].opts[i]?.s?.[winnerKey]) || 0;
+      if (v > bestScore) { bestScore = v; bestIdx = i; }
+    });
+    if (bestIdx >= 0) topUse = useLabels[bestIdx] || '';
+  }
+
+  const priceStr = `(月${yen(svc.price).replace('約', '約 ')})`;
+
+  if (topUse && freq) {
+    return `#AIサブスク診断 「${topUse}」目的で${freq}な私には「${svc.name}」${priceStr}が1位だった!`;
+  } else if (topUse) {
+    return `#AIサブスク診断 「${topUse}」目的の私には「${svc.name}」${priceStr}が1位に!`;
+  } else if (freq) {
+    return `#AIサブスク診断 ${freq}使いたい私には「${svc.name}」${priceStr}が1位だった!`;
+  } else {
+    return `AIサブスク診断やってみた 私に合うのは「${svc.name}」${priceStr}だった!`;
+  }
+}
+
 function showResult() {
   const ranked = Object.entries(scores)
     .map(([k, v]) => ({ key: k, score: v, ...SERVICES[k] }))
@@ -866,7 +903,7 @@ function showResult() {
   });
 
   // シェア
-  const text = `AIサブスク診断やってみた 私に合うのは「${winner.name}」${winner.price === 0 ? '(0円!)' : `(月${yen(winner.price).replace('約','約 ')})`}だった!`;
+  const text = buildShareText(winner.key, answers);
   const shareUrl = 'https://ai-subs-shindan.vercel.app/r/' + winner.key;
   document.getElementById('btnShare').href =
     'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(shareUrl);
