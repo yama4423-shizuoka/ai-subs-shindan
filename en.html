@@ -195,6 +195,20 @@
     }
     .combo-tip b { color:var(--green); }
 
+    /* SCORE BARS */
+    .score-bars { margin-top:20px; background:var(--s1); border:1px solid var(--bd); border-radius:var(--r2); padding:16px 18px; }
+    .score-bars-title { font-size:.82rem; color:var(--acc2); font-weight:800; margin-bottom:12px; }
+    .score-bar-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+    .score-bar-row:last-child { margin-bottom:0; }
+    .score-bar-label { font-size:.78rem; color:var(--tx); font-weight:600; width:130px; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .score-bar-track { flex:1; height:8px; background:var(--s2); border-radius:999px; overflow:hidden; }
+    .score-bar-fill { height:100%; border-radius:999px; }
+    .score-bar-fill.rank1 { background:linear-gradient(90deg,var(--acc),#60a5fa); }
+    .score-bar-fill.rank2 { background:var(--tx2); opacity:.7; }
+    .score-bar-fill.rank3 { background:var(--bd); opacity:.9; }
+    .score-bar-pct { font-size:.75rem; color:var(--tx2); width:36px; text-align:right; flex-shrink:0; }
+    .score-bars-note { font-size:.72rem; color:var(--tx2); margin-top:10px; line-height:1.6; }
+
     /* TABLE */
     .compare { margin-top:32px; }
     .compare h2 { font-size:1.05rem; font-weight:800; margin-bottom:14px; }
@@ -256,6 +270,7 @@
       .winner-card { padding:22px 16px; }
       .winner-name { font-size:1.35rem; }
       .result-actions button, .result-actions a { width:100%; text-align:center; }
+      .score-bar-label { width:100px; font-size:.73rem; }
     }
   </style>
 </head>
@@ -321,6 +336,12 @@
     </div>
     <div class="alts" id="altsList"></div>
     <div class="combo-tip" id="comboTip" style="display:none"></div>
+
+    <div class="score-bars" id="scoreBars" style="display:none">
+      <h3 class="score-bars-title">Why is this service #1? Fit score comparison</h3>
+      <div id="scoreBarsContent"></div>
+      <p class="score-bars-note">Relative fit scores calculated from your quiz answers</p>
+    </div>
 
     <div class="compare">
       <h2>AI Subscription Comparison</h2>
@@ -798,6 +819,27 @@ function showResult() {
     combo.innerHTML = ` <b>If you can stretch the budget:</b> Based on your answers, <b>${paidTop.name} (${formatPrice(paidTop.price)})</b> is your top paid pick. Start free and upgrade when the limits get in the way.`;
   } else {
     combo.style.display = 'none';
+  }
+
+  const scoreBarsEl = document.getElementById('scoreBars');
+  const scoreBarsContent = document.getElementById('scoreBarsContent');
+  const barsData = [
+    { name: winner.name, score: winner.score, rank: 1 },
+    ...alts.slice(0, 2).map((a, i) => ({ name: a.name, score: a.score, rank: i + 2 }))
+  ];
+  const maxScore = Math.max(...barsData.map(b => b.score));
+  if (maxScore > 0 && barsData.length >= 2) {
+    scoreBarsContent.innerHTML = '';
+    barsData.forEach(b => {
+      const pct = Math.max(0, Math.round(b.score / maxScore * 100));
+      const row = document.createElement('div');
+      row.className = 'score-bar-row';
+      row.innerHTML = `<span class="score-bar-label" title="${b.name}">${b.name}</span><div class="score-bar-track"><div class="score-bar-fill rank${b.rank}" style="width:${pct}%"></div></div><span class="score-bar-pct">${pct}%</span>`;
+      scoreBarsContent.appendChild(row);
+    });
+    scoreBarsEl.style.display = 'block';
+  } else {
+    scoreBarsEl.style.display = 'none';
   }
 
   const tb = document.getElementById('compareBody');
